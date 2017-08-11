@@ -6,7 +6,8 @@
   "scripts": {
     "minify": "uglifyjs --mangle --compress -o ./dist/honoka.min.js ./dist/honoka.js",
     "build": "webpack && npm run minify",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "start": "webpack --watch"
   },
   "repository": {
     "type": "git",

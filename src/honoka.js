@@ -23,7 +23,6 @@ export default function honoka(url, options = {}) {
   if (typeof options.method === 'undefined') {
     options.method = 'get';
   }
-  options.headers['X-Requested-With'] = 'XMLHttpRequest';
 
   if (
     options.method.toLowerCase() === 'get' &&
@@ -47,13 +46,18 @@ export default function honoka(url, options = {}) {
     const timeoutId = setTimeout(() => {
       reject(new Error('request timeout'));
     }, options.timeout);
-    fetch(url, options).then(response => {
-      if (response.status === 200) {
+    fetch(url, options)
+      .then(response => {
         clearTimeout(timeoutId);
-        resolve(response.json());
-      }
-      reject(new Error('response is not OK'));
-    });
+        if (response.status >= 200 && response.status < 400) {
+          resolve(response.json());
+        }
+        reject(new Error('response is not OK'));
+      })
+      .catch(e => {
+        clearTimeout(timeoutId);
+        reject(e);
+      });
   });
 }
 
