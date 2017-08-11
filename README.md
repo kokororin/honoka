@@ -1,6 +1,7 @@
 # honoka
 
 [![npm version](https://img.shields.io/npm/v/honoka.svg)](https://www.npmjs.org/package/honoka)
+[![Build Status](https://travis-ci.org/kokororin/honoka.svg?branch=master)](https://travis-ci.org/kokororin/honoka)
 
 Just a fetch() API wrapper
 
