@@ -2,6 +2,12 @@ import assign from 'lodash.assign';
 import trimStart from 'lodash.trimstart';
 import trimEnd from 'lodash.trimend';
 
+if (!global.Promise) {
+  throw new Error(
+    'Cannot find Promise in your environment. You may need a promise-polyfill.'
+  );
+}
+
 function objectToQueryString(object) {
   return Object.keys(object)
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(object[key])}`)
@@ -44,7 +50,7 @@ export default function honoka(url, options = {}) {
 
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
-      reject(new Error('request timeout'));
+      reject(new Error('Request timeout'));
     }, options.timeout);
     fetch(url, options)
       .then(response => {
@@ -52,7 +58,7 @@ export default function honoka(url, options = {}) {
         if (response.status >= 200 && response.status < 400) {
           resolve(response.json());
         }
-        reject(new Error('response is not OK'));
+        reject(new Error('Not expected status code'));
       })
       .catch(e => {
         clearTimeout(timeoutId);
