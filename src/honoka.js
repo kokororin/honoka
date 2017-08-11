@@ -1,6 +1,5 @@
-import assign from 'lodash.assign';
-import trimStart from 'lodash.trimstart';
-import trimEnd from 'lodash.trimend';
+import buildUrl from 'build-url';
+import { trimStart, trimEnd } from './utils';
 
 if (!global.Promise) {
   throw new Error(
@@ -8,14 +7,8 @@ if (!global.Promise) {
   );
 }
 
-function objectToQueryString(object) {
-  return Object.keys(object)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(object[key])}`)
-    .join('&');
-}
-
 export default function honoka(url, options = {}) {
-  options = assign({}, honoka.defaults, options);
+  options = Object.assign({}, honoka.defaults, options);
 
   if (!/^(?:[a-z]+:)?\/\//i.test(url)) {
     url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
@@ -34,7 +27,9 @@ export default function honoka(url, options = {}) {
     options.method.toLowerCase() === 'get' &&
     typeof options.data === 'object'
   ) {
-    url += '?' + objectToQueryString(options.data);
+    url = buildUrl(url, {
+      queryParams: options.data
+    });
   }
 
   // When post
@@ -79,13 +74,14 @@ honoka.defaults = {
 
 honoka.version = process.env.HONOKA_VERSION;
 
-const methods = ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'];
-
-methods.forEach(method => {
-  honoka[method] = (url, options) => {
-    return honoka(url, {
-      method,
-      ...options
-    });
-  };
-});
+Array.prototype.forEach.call(
+  ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'],
+  method => {
+    honoka[method] = (url, options) => {
+      return honoka(url, {
+        method,
+        ...options
+      });
+    };
+  }
+);

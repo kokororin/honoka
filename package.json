@@ -4,11 +4,10 @@
   "description": "Just a fetch() API wrapper",
   "main": "dist/honoka.js",
   "scripts": {
-    "minify": "uglifyjs --mangle --compress -o ./dist/honoka.min.js ./dist/honoka.js",
-    "build": "webpack && npm run minify",
+    "build": "webpack --progress",
     "lint": "eslint ./src",
     "start": "webpack --watch",
-    "test": "karma start"
+    "test": "karma start && npm run lint"
   },
   "repository": {
     "type": "git",
@@ -25,15 +24,14 @@
   },
   "homepage": "https://github.com/kokororin/honoka#readme",
   "dependencies": {
-    "lodash.assign": "^4.2.0",
-    "lodash.trimend": "^4.5.1",
-    "lodash.trimstart": "^4.5.1",
+    "build-url": "^1.0.10",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
@@ -49,7 +47,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "mocha": "^3.5.0",
-    "uglify-js": "^3.0.27",
+    "unminified-webpack-plugin": "^1.2.0",
     "webpack": "^3.5.3"
   }
 }
