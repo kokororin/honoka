@@ -56,7 +56,12 @@ export default function honoka(url, options = {}) {
       .then(response => {
         clearTimeout(timeoutId);
         if (response.status >= 200 && response.status < 400) {
-          resolve(response.json());
+          const ct = response.headers.get('Content-Type');
+          if (ct && ct.match(/application\/json/i)) {
+            resolve(response.json());
+          } else {
+            resolve(response.text());
+          }
         }
         reject(new Error('Not expected status code'));
       })
