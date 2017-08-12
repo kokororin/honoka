@@ -9,6 +9,7 @@ Just a fetch() API wrapper
 
 - Same as [fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - Timeout
+- Interceptors before request and response
 
 
 ## Installing
@@ -22,7 +23,7 @@ $ npm install honoka
 Using cdn:
 
 ```html
-<script src="https://unpkg.com/honoka"></script>
+<script src="https://unpkg.com/honoka/dist/honoka.min.js"></script>
 ```
 
 ## Example
@@ -32,10 +33,10 @@ Performing a `GET` request
 ```js
 // Make a request for a user with a given ID
 honoka.get('/user?ID=12345')
-  .then(function (data) {
+  .then(data => {
     console.log(data);
   })
-  .catch(function (error) {
+  .catch(error => {
     console.log(error);
   });
 
@@ -45,10 +46,10 @@ honoka.get('/user', {
       ID: 12345
     }
   })
-  .then(function (data) {
+  .then(data => {
     console.log(data);
   })
-  .catch(function (error) {
+  .catch(error => {
     console.log(error);
   });
 ```
@@ -62,10 +63,10 @@ honoka.post('/user', {
       lastName: 'Flintstone'
     }
   })
-  .then(function (data) {
+  .then(data => {
     console.log(data);
   })
-  .catch(function (error) {
+  .catch(error => {
     console.log(error);
   });
 ```
@@ -121,6 +122,43 @@ These are the available config options for making requests. Same as fetch() API.
 }
 ```
 
+## Config Defaults
+
+You can specify config defaults that will be applied to every request.
+
+### Global defaults
+
+```js
+honoka.defaults.baseURL = 'https://example.com/api';
+honoka.defaults.timeout = 10e3;
+```
+
+## Interceptors
+You can intercept requests or responses before they are handled by `then`.
+
+```js
+const unregister = honoka.interceptors.register({
+  request: options => {
+    // Modify the options here
+    const token = localStorage.getItem('token');
+    if (token) {
+      options.headers['X-JWT-Token'] = token;
+    }
+    return options;
+  },
+  response: (data, response) => {
+    // Check responseData here
+    if (data.status && data.status !== 'success') {
+      alert('request error');
+    }
+    // Modify the response object
+    return response;
+  }
+})
+
+// Unregister your interceptor
+unregister();
+```
 
 ## License
 

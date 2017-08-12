@@ -15,8 +15,57 @@ export function trimEnd(str, charlist = spaceChars) {
   return (str + '').replace(re, '');
 }
 
+const toString = Object.prototype.toString;
+const hasOwn = Object.prototype.hasOwnProperty;
+
 export function isObject(value) {
   return value !== null && typeof value === 'object';
+}
+
+export function isArray(value) {
+  return toString.call(value) === '[object Array]';
+}
+
+export function forEach(object, fn, context) {
+  if (toString.call(fn) !== '[object Function]') {
+    throw new TypeError('iterator must be a function');
+  }
+
+  const l = object.length;
+  if (l === +l) {
+    for (let i = 0; i < l; i++) {
+      fn.call(context, object[i], i, object);
+    }
+  } else {
+    for (const k in object) {
+      if (Object.prototype.hasOwnProperty.call(object, k)) {
+        fn.call(context, object[k], k, object);
+      }
+    }
+  }
+}
+
+export function reduce(array, fn, initialValue) {
+  let hasAcc = arguments.length >= 3;
+  if (hasAcc && array.reduce) {
+    return array.reduce(fn, initialValue);
+  }
+  if (array.reduce) {
+    return array.reduce(fn);
+  }
+
+  for (let i = 0; i < array.length; i++) {
+    if (!hasOwn.call(array, i)) {
+      continue;
+    }
+    if (!hasAcc) {
+      initialValue = array[i];
+      hasAcc = true;
+      continue;
+    }
+    initialValue = fn(initialValue, array[i], i);
+  }
+  return initialValue;
 }
 
 export function isAbsoluteURL(url) {
@@ -30,7 +79,7 @@ export function buildURL(url, params) {
 
   const uris = [];
 
-  keys(params).forEach(key => {
+  forEach(keys(params), key => {
     let value = params[key];
     if (isObject(value)) {
       value = JSON.stringify(value);

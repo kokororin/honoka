@@ -1,4 +1,12 @@
-import { trimStart, trimEnd, isAbsoluteURL, buildURL, isObject } from './utils';
+import {
+  trimStart,
+  trimEnd,
+  isAbsoluteURL,
+  buildURL,
+  isObject,
+  forEach,
+  reduce
+} from './utils';
 
 if (!global.Promise) {
   throw new Error(
@@ -40,21 +48,49 @@ function honoka(url, options = {}) {
     }
   }
 
+  // parse interceptors
+  const interceptors = honoka.interceptors;
+  const reversedInterceptors = reduce(
+    interceptors,
+    (array, interceptor) => [interceptor, ...array],
+    []
+  );
+
+  forEach(reversedInterceptors, interceptor => {
+    if (interceptor.request) {
+      options = interceptor.request(options);
+    }
+  });
+
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error('Request timeout'));
-    }, options.timeout);
+    if (options.timeout > 0) {
+      setTimeout(() => {
+        reject(new Error('Request timeout'));
+      }, options.timeout);
+    }
+
     fetch(url, options)
       .then(response => {
-        if (response.status >= 200 && response.status < 400) {
+        honoka.response = response;
+
+        response.clone().text().then(responseData => {
           const ct = response.headers.get('Content-Type');
           if (ct && ct.match(/application\/json/i)) {
-            resolve(response.json());
-          } else {
-            resolve(response.text());
+            responseData = JSON.parse(responseData);
           }
-        }
-        reject(new Error('Not expected status code'));
+
+          forEach(reversedInterceptors, interceptor => {
+            if (interceptor.response) {
+              interceptor.response(responseData, response);
+            }
+          });
+
+          if (response.status >= 200 && response.status < 400) {
+            resolve(responseData);
+          } else {
+            reject(new Error('Not expected status code', response.status));
+          }
+        });
       })
       .catch(e => {
         reject(e);
@@ -62,14 +98,34 @@ function honoka(url, options = {}) {
   });
 }
 
+// honoka default options
 honoka.defaults = {
-  timeout: 10e3,
+  timeout: 0,
   baseURL: ''
 };
 
+// honoka interceptors injections
+honoka.interceptors = [];
+
+honoka.interceptors.register = interceptor => {
+  honoka.interceptors.push(interceptor);
+  return () => {
+    const index = honoka.interceptors.indexOf(interceptor);
+    if (index >= 0) {
+      honoka.interceptors.splice(index, 1);
+    }
+  };
+};
+
+honoka.interceptors.clear = () => {
+  honoka.interceptors = [];
+};
+
+// Let's export the library version
 honoka.version = process.env.HONOKA_VERSION;
 
-Array.prototype.forEach.call(
+// Provide aliases for supported request methods
+forEach(
   ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'],
   method => {
     honoka[method] = (url, options) => {
