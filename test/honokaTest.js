@@ -1,5 +1,6 @@
 import fetchMock from 'fetch-mock';
 import honoka from '../src/honoka';
+import { buildURL } from '../src/utils';
 import pkg from '../package.json';
 
 const mockJsonResponse = (url = '*') => {
@@ -14,6 +15,15 @@ const mockJsonResponse = (url = '*') => {
 describe('honoka', () => {
   afterEach(() => {
     fetchMock.restore();
+  });
+
+  it('buildURL() can build query strings', () => {
+    let url = buildURL('http://www.google.com/s', { q: 'honoka' });
+    expect(url).to.equal('http://www.google.com/s?q=honoka');
+    url = buildURL('http://www.google.com/s', { q: 'honoka', ie: 'UTF-8' });
+    expect(url).to.equal('http://www.google.com/s?q=honoka&ie=UTF-8');
+    url = buildURL('http://www.google.com/s?q=honoka', { ie: 'UTF-8' });
+    expect(url).to.equal('http://www.google.com/s?q=honoka&ie=UTF-8');
   });
 
   it('honoka.version should return a version string', () => {
@@ -33,8 +43,8 @@ describe('honoka', () => {
   });
 
   it('honoka() should build query strings correctly', async () => {
-    mockJsonResponse('http://www.google.com/?q=honoka&ie=UTF-8');
-    const response = await honoka('http://www.google.com/', {
+    mockJsonResponse('http://www.google.com/s?q=honoka&ie=UTF-8');
+    const response = await honoka('http://www.google.com/s', {
       data: {
         q: 'honoka',
         ie: 'UTF-8'

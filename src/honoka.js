@@ -1,5 +1,4 @@
-import buildUrl from 'build-url';
-import { trimStart, trimEnd } from './utils';
+import { trimStart, trimEnd, isAbsoluteURL, buildURL, isObject } from './utils';
 
 if (!global.Promise) {
   throw new Error(
@@ -7,10 +6,13 @@ if (!global.Promise) {
   );
 }
 
-export default function honoka(url, options = {}) {
-  options = Object.assign({}, honoka.defaults, options);
+function honoka(url, options = {}) {
+  options = {
+    ...honoka.options,
+    ...options
+  };
 
-  if (!/^(?:[a-z]+:)?\/\//i.test(url)) {
+  if (!isAbsoluteURL(url)) {
     url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
   }
 
@@ -23,13 +25,8 @@ export default function honoka(url, options = {}) {
     options.method = 'get';
   }
 
-  if (
-    options.method.toLowerCase() === 'get' &&
-    typeof options.data === 'object'
-  ) {
-    url = buildUrl(url, {
-      queryParams: options.data
-    });
+  if (options.method.toLowerCase() === 'get' && isObject(options.data)) {
+    url = buildURL(url, options.data);
   }
 
   // When post
@@ -85,3 +82,5 @@ Array.prototype.forEach.call(
     };
   }
 );
+
+export default honoka;
