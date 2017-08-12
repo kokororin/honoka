@@ -8,7 +8,7 @@ if (!global.Promise) {
 
 function honoka(url, options = {}) {
   options = {
-    ...honoka.options,
+    ...honoka.defaults,
     ...options
   };
 
@@ -41,12 +41,11 @@ function honoka(url, options = {}) {
   }
 
   return new Promise((resolve, reject) => {
-    const timeoutId = setTimeout(() => {
+    setTimeout(() => {
       reject(new Error('Request timeout'));
     }, options.timeout);
     fetch(url, options)
       .then(response => {
-        clearTimeout(timeoutId);
         if (response.status >= 200 && response.status < 400) {
           const ct = response.headers.get('Content-Type');
           if (ct && ct.match(/application\/json/i)) {
@@ -58,7 +57,6 @@ function honoka(url, options = {}) {
         reject(new Error('Not expected status code'));
       })
       .catch(e => {
-        clearTimeout(timeoutId);
         reject(e);
       });
   });
