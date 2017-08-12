@@ -1,6 +1,6 @@
 {
   "name": "honoka",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Just a fetch() API wrapper",
   "main": "dist/honoka.js",
   "scripts": {
