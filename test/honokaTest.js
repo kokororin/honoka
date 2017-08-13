@@ -138,9 +138,9 @@ describe('honoka', () => {
     honoka.interceptors.register({
       response: null
     });
-    expect(honoka.interceptors.length).to.equal(1);
+    expect(honoka.interceptors.get().length).to.equal(1);
     honoka.interceptors.clear();
-    expect(honoka.interceptors.length).to.equal(0);
+    expect(honoka.interceptors.get().length).to.equal(0);
   });
 
   it('honoka() should convert JSON Object when Content-Type is application/json', async () => {

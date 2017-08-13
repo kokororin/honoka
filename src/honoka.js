@@ -49,7 +49,7 @@ function honoka(url, options = {}) {
 
   // parse interceptors
   const reversedInterceptors = reduce(
-    interceptors,
+    interceptors.get(),
     (array, interceptor) => [interceptor, ...array],
     []
   );

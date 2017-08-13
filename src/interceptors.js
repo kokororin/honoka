@@ -1,18 +1,18 @@
 // honoka interceptors injections
-const interceptors = [];
+const interceptorContainer = [];
 
-interceptors.register = interceptor => {
-  interceptors.push(interceptor);
-  return () => {
-    const index = interceptors.indexOf(interceptor);
-    if (index >= 0) {
-      interceptors.splice(index, 1);
-    }
-  };
+export default {
+  register: interceptor => {
+    interceptorContainer.push(interceptor);
+    return () => {
+      const index = interceptorContainer.indexOf(interceptor);
+      if (index >= 0) {
+        interceptorContainer.splice(index, 1);
+      }
+    };
+  },
+  clear: () => {
+    interceptorContainer.length = 0;
+  },
+  get: () => interceptorContainer
 };
-
-interceptors.clear = () => {
-  interceptors.length = 0;
-};
-
-export default interceptors;
