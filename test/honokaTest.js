@@ -3,6 +3,8 @@ import honoka from '../src/honoka';
 import { buildURL } from '../src/utils';
 import pkg from '../package.json';
 
+const baseURL = 'http://www.google.com';
+
 const mockJsonResponse = (url = '*', method = 'get') => {
   fetchMock.mock(url, {
     body: { hello: 'world' },
@@ -16,24 +18,26 @@ const mockJsonResponse = (url = '*', method = 'get') => {
 describe('honoka', () => {
   afterEach(() => {
     fetchMock.restore();
+    honoka.defaults.baseURL = '';
+    honoka.interceptors.clear();
   });
 
   it('honoka.buildURL() can build query strings', () => {
-    const url = buildURL('http://www.google.com/s', { q: 'honoka' });
-    expect(url).to.equal('http://www.google.com/s?q=honoka');
+    const url = buildURL(`${baseURL}/s`, { q: 'honoka' });
+    expect(url).to.equal(`${baseURL}/s?q=honoka`);
   });
 
   it('honoka.buildURL() can build query strings with two parameters', () => {
-    const url = buildURL('http://www.google.com/s', {
+    const url = buildURL(`${baseURL}/s`, {
       q: 'honoka',
       ie: 'UTF-8'
     });
-    expect(url).to.equal('http://www.google.com/s?q=honoka&ie=UTF-8');
+    expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
   });
 
   it('honoka.buildURL() can build query strings with a query-given url', () => {
-    const url = buildURL('http://www.google.com/s?q=honoka', { ie: 'UTF-8' });
-    expect(url).to.equal('http://www.google.com/s?q=honoka&ie=UTF-8');
+    const url = buildURL(`${baseURL}/s?q=honoka`, { ie: 'UTF-8' });
+    expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
   });
 
   it('honoka.version should return a version string', () => {
@@ -42,13 +46,13 @@ describe('honoka', () => {
 
   it('honoka() should return a body when status is 200', async () => {
     mockJsonResponse();
-    const data = await honoka('http://www.google.com');
+    const data = await honoka(baseURL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
   it('honoka() should build query strings correctly', async () => {
-    mockJsonResponse('http://www.google.com/s?q=honoka&ie=UTF-8');
-    const data = await honoka('http://www.google.com/s', {
+    mockJsonResponse(`${baseURL}/s?q=honoka&ie=UTF-8`);
+    const data = await honoka(`${baseURL}/s`, {
       data: {
         q: 'honoka',
         ie: 'UTF-8'
@@ -59,13 +63,13 @@ describe('honoka', () => {
 
   it('honoka() should get the body object when fetching a json', async () => {
     mockJsonResponse();
-    const data = await honoka('http://www.google.com');
+    const data = await honoka(baseURL);
     expect(data.hello).to.equal('world');
   });
 
   it('honoka.response should return the fetch response', async () => {
     mockJsonResponse();
-    await honoka('http://www.google.com');
+    await honoka(baseURL);
     expect(honoka.response.headers.get('Content-Type')).to.equal(
       'application/json'
     );
@@ -73,7 +77,7 @@ describe('honoka', () => {
 
   it('honoka.get() should return a body when status is 200', async () => {
     mockJsonResponse();
-    const data = await honoka('http://www.google.com');
+    const data = await honoka(baseURL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
@@ -81,7 +85,7 @@ describe('honoka', () => {
     fetchMock.mock('*', { status: 400 });
     let err;
     try {
-      await honoka('http://www.google.com');
+      await honoka(baseURL);
     } catch (e) {
       err = e;
     }
@@ -95,7 +99,7 @@ describe('honoka', () => {
     fetchMock.mock('*', delay);
     let err;
     try {
-      await honoka('http://www.google.com', {
+      await honoka(baseURL, {
         timeout: 500
       });
     } catch (e) {
@@ -106,7 +110,7 @@ describe('honoka', () => {
     }).to.throw(/Request timeout/);
   });
 
-  it('honoka.interceptors.regsiter() should register a request interceptor', async () => {
+  it('honoka.interceptors.register() should register a request interceptor', async () => {
     honoka.interceptors.register({
       request: options => {
         options.method = 'post';
@@ -114,11 +118,11 @@ describe('honoka', () => {
       }
     });
     mockJsonResponse('*', 'post');
-    const data = await honoka('http://www.google.com');
+    const data = await honoka(baseURL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
-  it('honoka.interceptors.regsiter() should register a response interceptor', async () => {
+  it('honoka.interceptors.register() should register a response interceptor', async () => {
     honoka.interceptors.register({
       response: (data, response) => {
         response.test = 'test';
@@ -126,13 +130,34 @@ describe('honoka', () => {
       }
     });
     mockJsonResponse();
-    await honoka('http://www.google.com');
+    await honoka(baseURL);
     expect(honoka.response.test).to.equal('test');
   });
 
+  it('honoka.interceptors.clear() should clear all interceptors', () => {
+    honoka.interceptors.register({
+      response: null
+    });
+    expect(honoka.interceptors.length).to.equal(1);
+    honoka.interceptors.clear();
+    expect(honoka.interceptors.length).to.equal(0);
+  });
+
+  it('honoka() should convert JSON Object when Content-Type is application/json', async () => {
+    mockJsonResponse((url, options) => {
+      return options.body === JSON.stringify({ hello: 'world' });
+    }, 'post');
+    const data = await honoka.post(baseURL, {
+      data: {
+        hello: 'world'
+      }
+    });
+    expect(data).to.deep.equal({ hello: 'world' });
+  });
+
   it('honoka.defaults should work', async () => {
-    honoka.defaults.baseURL = 'http://www.google.com';
-    mockJsonResponse('http://www.google.com/s');
+    honoka.defaults.baseURL = baseURL;
+    mockJsonResponse(`${baseURL}/s`);
     const data = await honoka('/s');
     expect(data).to.deep.equal({ hello: 'world' });
   });
