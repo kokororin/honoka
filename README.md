@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/kokororin/honoka.svg?branch=master)](https://travis-ci.org/kokororin/honoka)
 [![Coverage Status](https://coveralls.io/repos/github/kokororin/honoka/badge.svg?branch=master)](https://coveralls.io/github/kokororin/honoka?branch=master)
 
-Just a fetch() API wrapper
+Just a fetch() API wrapper for both Browser and Node.js.
 
 ## Features
 

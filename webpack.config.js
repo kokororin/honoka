@@ -1,17 +1,20 @@
 const path = require('path');
 const webpack = require('webpack');
-const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const pkg = require('./package.json');
 
 const config = {
-  entry: ['whatwg-fetch', './src/index.js'],
+  entry: {
+    honoka: ['whatwg-fetch', './src/index'],
+    'honoka.min': ['whatwg-fetch', './src/index']
+  },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'honoka.min.js',
+    filename: '[name].js',
     library: 'honoka',
     libraryTarget: 'umd'
   },
   resolve: { extensions: ['.js'] },
+  devtool: '#source-map',
   module: {
     rules: [
       {
@@ -29,14 +32,14 @@ const config = {
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.UglifyJsPlugin({
+      include: /\.min\.js$/,
       compress: {
         warnings: false,
         drop_console: true
       },
       beautify: false,
       comments: false
-    }),
-    new UnminifiedWebpackPlugin()
+    })
   ]
 };
 
