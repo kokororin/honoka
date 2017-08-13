@@ -162,6 +162,10 @@ const unregister = honoka.interceptors.register({
 unregister();
 ```
 
+## Changelog
+
+For changelogs, see [Release Notes](https://github.com/kokororin/honoka/releases).
+
 ## License
 
 MIT
