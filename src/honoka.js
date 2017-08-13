@@ -81,7 +81,10 @@ function honoka(url, options = {}) {
 
           forEach(reversedInterceptors, interceptor => {
             if (interceptor.response) {
-              interceptor.response(responseData, response);
+              honoka.response = response = interceptor.response(
+                responseData,
+                response
+              );
             }
           });
 

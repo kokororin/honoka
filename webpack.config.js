@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const pkg = require('./package.json');
 
-module.exports = {
+const config = {
   entry: ['whatwg-fetch', './src/index.js'],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -39,3 +39,17 @@ module.exports = {
     new UnminifiedWebpackPlugin()
   ]
 };
+
+if (process.env.NODE_ENV === 'test') {
+  config.module.rules.push({
+    test: /\.(js|jsx)$/,
+    enforce: 'post',
+    exclude: /node_modules|test/,
+    loader: 'istanbul-instrumenter-loader',
+    options: {
+      esModules: true
+    }
+  });
+}
+
+module.exports = config;

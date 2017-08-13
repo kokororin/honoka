@@ -7,7 +7,8 @@
     "build": "webpack --progress",
     "lint": "eslint ./src",
     "start": "webpack --watch",
-    "test": "karma start && npm run lint"
+    "test": "cross-env NODE_ENV=test karma start && npm run lint",
+    "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,9 @@
   },
   "keywords": [
     "fetch",
+    "xhr",
+    "ajax",
+    "promise",
     "lovelive"
   ],
   "author": "kokororin",
@@ -24,7 +28,6 @@
   },
   "homepage": "https://github.com/kokororin/honoka#readme",
   "dependencies": {
-    "object-keys": "^1.0.11",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
@@ -36,12 +39,16 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.1.1",
+    "coveralls": "^2.13.1",
+    "cross-env": "^5.0.5",
     "eslint": "^4.4.1",
     "eslint-config-kotori": "^0.1.3",
     "fetch-mock": "^5.12.2",
+    "istanbul-instrumenter-loader": "^3.0.0",
     "karma": "^1.7.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage-istanbul-reporter": "^1.3.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.3",
     "karma-sourcemap-loader": "^0.3.7",

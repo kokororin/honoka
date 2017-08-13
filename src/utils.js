@@ -1,5 +1,3 @@
-import keys from 'object-keys';
-
 const spaceChars = ' \\s\u00A0';
 const symbolRegex = /([[\]().?/*{}+$^:])/g;
 
@@ -79,8 +77,7 @@ export function buildURL(url, params) {
 
   const uris = [];
 
-  forEach(keys(params), key => {
-    let value = params[key];
+  forEach(params, (value, key) => {
     if (isObject(value)) {
       value = JSON.stringify(value);
     }
