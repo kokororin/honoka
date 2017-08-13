@@ -7,6 +7,8 @@ import {
   forEach,
   reduce
 } from './utils';
+import defaults from './defaults';
+import interceptors from './interceptors';
 
 if (!global.Promise) {
   throw new Error(
@@ -16,7 +18,7 @@ if (!global.Promise) {
 
 function honoka(url, options = {}) {
   options = {
-    ...honoka.defaults,
+    ...defaults,
     ...options
   };
 
@@ -24,32 +26,28 @@ function honoka(url, options = {}) {
     url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
   }
 
-  if (typeof options.headers === 'undefined') {
-    options.headers = {};
-  }
-
-  // Default method is GET
-  if (typeof options.method === 'undefined') {
-    options.method = 'get';
-  }
-
   if (options.method.toLowerCase() === 'get' && isObject(options.data)) {
     url = buildURL(url, options.data);
   }
 
-  // When post
-  if (options.method.toLowerCase() === 'post') {
-    // default content-type is application/json
-    if (typeof options.headers['Content-Type'] === 'undefined') {
-      options.headers['Content-Type'] = 'application/json';
-    }
-    if (options.headers['Content-Type'] === 'application/json') {
-      options.body = JSON.stringify(options.data);
-    }
+  // Set default headers for specified methods
+  const methodDefaultHeaders = defaults.headers[options.method.toLowerCase()];
+  if (isObject(methodDefaultHeaders)) {
+    options.headers = {
+      ...options.headers,
+      ...methodDefaultHeaders
+    };
+  }
+
+  forEach(honoka.methods, method => {
+    delete options.headers[method];
+  });
+
+  if (options.headers['Content-Type'] === 'application/json') {
+    options.body = JSON.stringify(options.data);
   }
 
   // parse interceptors
-  const interceptors = honoka.interceptors;
   const reversedInterceptors = reduce(
     interceptors,
     (array, interceptor) => [interceptor, ...array],
@@ -101,43 +99,20 @@ function honoka(url, options = {}) {
   });
 }
 
-// honoka default options
-honoka.defaults = {
-  timeout: 0,
-  baseURL: ''
-};
-
-// honoka interceptors injections
-honoka.interceptors = [];
-
-honoka.interceptors.register = interceptor => {
-  honoka.interceptors.push(interceptor);
-  return () => {
-    const index = honoka.interceptors.indexOf(interceptor);
-    if (index >= 0) {
-      honoka.interceptors.splice(index, 1);
-    }
-  };
-};
-
-honoka.interceptors.clear = () => {
-  honoka.interceptors = [];
-};
-
+honoka.methods = ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'];
+honoka.defaults = defaults;
+honoka.interceptors = interceptors;
 // Let's export the library version
 honoka.version = process.env.HONOKA_VERSION;
 
 // Provide aliases for supported request methods
-forEach(
-  ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'],
-  method => {
-    honoka[method] = (url, options) => {
-      return honoka(url, {
-        method,
-        ...options
-      });
-    };
-  }
-);
+forEach(honoka.methods, method => {
+  honoka[method] = (url, options) => {
+    return honoka(url, {
+      method,
+      ...options
+    });
+  };
+});
 
 export default honoka;

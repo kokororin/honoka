@@ -132,6 +132,7 @@ You can specify config defaults that will be applied to every request.
 ```js
 honoka.defaults.baseURL = 'https://example.com/api';
 honoka.defaults.timeout = 10e3;
+honoka.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 ```
 
 ## Interceptors
