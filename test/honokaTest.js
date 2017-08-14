@@ -1,6 +1,6 @@
 import fetchMock from 'fetch-mock';
 import honoka from '../src/honoka';
-import { buildURL } from '../src/utils';
+import { buildURL, isAbsoluteURL, trimStart, trimEnd } from '../src/utils';
 import pkg from '../package.json';
 
 const baseURL = 'http://www.google.com';
@@ -22,12 +22,12 @@ describe('honoka', () => {
     honoka.interceptors.clear();
   });
 
-  it('honoka.buildURL() can build query strings', () => {
+  it('utils.buildURL() can build query strings', () => {
     const url = buildURL(`${baseURL}/s`, { q: 'honoka' });
     expect(url).to.equal(`${baseURL}/s?q=honoka`);
   });
 
-  it('honoka.buildURL() can build query strings with two parameters', () => {
+  it('utils.buildURL() can build query strings with two parameters', () => {
     const url = buildURL(`${baseURL}/s`, {
       q: 'honoka',
       ie: 'UTF-8'
@@ -35,9 +35,24 @@ describe('honoka', () => {
     expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
   });
 
-  it('honoka.buildURL() can build query strings with a query-given url', () => {
+  it('utils.buildURL() can build query strings with a query-given url', () => {
     const url = buildURL(`${baseURL}/s?q=honoka`, { ie: 'UTF-8' });
     expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
+  });
+
+  it('utils.isAbsoluteURL() can determine whether url is absolute', () => {
+    expect(isAbsoluteURL(baseURL)).to.equal(true);
+    expect(isAbsoluteURL('/s')).to.equal(false);
+  });
+
+  it('utils.trimStart() should remove leading whitespace or specified characters', () => {
+    const string = trimStart('/honoka', '/');
+    expect(string).to.equal('honoka');
+  });
+
+  it('utils.trimEnd() should remove trailing whitespace or specified characters', () => {
+    const string = trimEnd('honoka/', '/');
+    expect(string).to.equal('honoka');
   });
 
   it('honoka.version should return a version string', () => {
@@ -67,7 +82,7 @@ describe('honoka', () => {
     expect(data.hello).to.equal('world');
   });
 
-  it('honoka.response should return the fetch response', async () => {
+  it('honoka.response should return the fetch response object', async () => {
     mockJsonResponse();
     await honoka(baseURL);
     expect(honoka.response.headers.get('Content-Type')).to.equal(
