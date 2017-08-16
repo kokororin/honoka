@@ -39,6 +39,9 @@ const config = {
       },
       beautify: false,
       comments: false
+    }),
+    new webpack.BannerPlugin({
+      banner: `${pkg.name} v${pkg.version} | (c) ${new Date().getFullYear()} by ${pkg.author}`
     })
   ]
 };

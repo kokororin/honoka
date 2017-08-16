@@ -10,17 +10,15 @@ import {
 import defaults from './defaults';
 import interceptors from './interceptors';
 
-if (!global.Promise) {
-  throw new Error(
-    'Cannot find Promise in your environment. You may need a promise-polyfill.'
-  );
-}
-
 function honoka(url, options = {}) {
   options = {
     ...defaults,
     ...options
   };
+
+  if (typeof url !== 'string') {
+    throw new TypeError(`Argument 1 expected string but got ${typeof url}`);
+  }
 
   if (!isAbsoluteURL(url)) {
     url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
