@@ -1,3 +1,5 @@
+import methods from './methods';
+
 const spaceChars = ' \\s\u00A0';
 const symbolRegex = /([[\]().?/*{}+$^:])/g;
 
@@ -87,4 +89,23 @@ export function buildURL(url, params) {
   url += (url.indexOf('?') === -1 ? '?' : '&') + uris.join('&');
 
   return url;
+}
+
+export function normalizeHeaders(headers) {
+  const ucFirst = str => {
+    str += '';
+    return str.charAt(0).toUpperCase() + str.substr(1);
+  };
+
+  forEach(headers, (value, key) => {
+    if (methods.indexOf(key) === -1) {
+      const normalizedKey = ucFirst(
+        key.toLowerCase().replace('_', '-').replace(/-(\w)/g, ($0, $1) => {
+          return '-' + ucFirst($1);
+        })
+      );
+      headers[normalizedKey] = value;
+      delete headers[key];
+    }
+  });
 }

@@ -1,6 +1,12 @@
 import fetchMock from 'fetch-mock';
 import honoka from '../src/honoka';
-import { buildURL, isAbsoluteURL, trimStart, trimEnd } from '../src/utils';
+import {
+  buildURL,
+  isAbsoluteURL,
+  normalizeHeaders,
+  trimStart,
+  trimEnd
+} from '../src/utils';
 import pkg from '../package.json';
 
 const baseURL = 'http://www.google.com';
@@ -43,6 +49,15 @@ describe('honoka', () => {
   it('utils.isAbsoluteURL() can determine whether url is absolute', () => {
     expect(isAbsoluteURL(baseURL)).to.equal(true);
     expect(isAbsoluteURL('/s')).to.equal(false);
+  });
+
+  it('utils.normalizeHeaders() can normalize headers', () => {
+    const headers = {
+      'content-type': 'application/json'
+    };
+    normalizeHeaders(headers);
+    expect(headers).to.have.property('Content-Type', 'application/json');
+    expect(headers).to.not.have.property('content-type');
   });
 
   it('utils.trimStart() should remove leading whitespace or specified characters', () => {

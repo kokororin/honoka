@@ -3,11 +3,13 @@ import {
   trimEnd,
   isAbsoluteURL,
   buildURL,
+  normalizeHeaders,
   isObject,
   forEach,
   reduce
 } from './utils';
 import defaults from './defaults';
+import methods from './methods';
 import interceptors from './interceptors';
 
 function honoka(url, options = {}) {
@@ -28,21 +30,29 @@ function honoka(url, options = {}) {
     url = buildURL(url, options.data);
   }
 
+  normalizeHeaders(options.headers);
+
   // Set default headers for specified methods
   const methodDefaultHeaders = defaults.headers[options.method.toLowerCase()];
   if (isObject(methodDefaultHeaders)) {
     options.headers = {
-      ...options.headers,
-      ...methodDefaultHeaders
+      ...methodDefaultHeaders,
+      ...options.headers
     };
   }
 
-  forEach(honoka.methods, method => {
+  forEach(methods, method => {
     delete options.headers[method];
   });
 
   if (options.headers['Content-Type'] === 'application/json') {
     options.body = JSON.stringify(options.data);
+  } else if (options.data) {
+    options.body = options.data;
+  }
+
+  if (options.headers['Content-Type'] === 'multipart/form-data') {
+    delete options.headers['Content-Type'];
   }
 
   // parse interceptors
@@ -97,14 +107,13 @@ function honoka(url, options = {}) {
   });
 }
 
-honoka.methods = ['get', 'delete', 'head', 'options', 'post', 'put', 'patch'];
 honoka.defaults = defaults;
 honoka.interceptors = interceptors;
 // Let's export the library version
 honoka.version = process.env.HONOKA_VERSION;
 
 // Provide aliases for supported request methods
-forEach(honoka.methods, method => {
+forEach(methods, method => {
   honoka[method] = (url, options) => {
     return honoka(url, {
       method,
