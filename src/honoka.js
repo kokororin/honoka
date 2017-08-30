@@ -18,6 +18,8 @@ function honoka(url, options = {}) {
     ...options
   };
 
+  options.method = options.method.toLowerCase();
+
   if (typeof url !== 'string') {
     throw new TypeError(`Argument 1 expected string but got ${typeof url}`);
   }
@@ -26,14 +28,14 @@ function honoka(url, options = {}) {
     url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
   }
 
-  if (options.method.toLowerCase() === 'get' && isObject(options.data)) {
+  if (options.method === 'get' && isObject(options.data)) {
     url = buildURL(url, options.data);
   }
 
   normalizeHeaders(options.headers);
 
   // Set default headers for specified methods
-  const methodDefaultHeaders = defaults.headers[options.method.toLowerCase()];
+  const methodDefaultHeaders = defaults.headers[options.method];
   if (isObject(methodDefaultHeaders)) {
     options.headers = {
       ...methodDefaultHeaders,
@@ -47,7 +49,10 @@ function honoka(url, options = {}) {
 
   if (options.headers['Content-Type'] === 'application/json') {
     options.body = JSON.stringify(options.data);
-  } else if (options.data) {
+  } else if (
+    options.data &&
+    (options.method !== 'get' && options.method !== 'head')
+  ) {
     options.body = options.data;
   }
 
