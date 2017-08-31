@@ -5,6 +5,7 @@ import {
   buildURL,
   normalizeHeaders,
   isObject,
+  isArray,
   forEach,
   reduce
 } from './utils';
@@ -69,7 +70,14 @@ function honoka(url, options = {}) {
 
   forEach(reversedInterceptors, interceptor => {
     if (interceptor.request) {
-      options = interceptor.request(options);
+      const interceptedOptions = interceptor.request(options);
+      if (isObject(interceptedOptions)) {
+        options = interceptedOptions;
+      } else {
+        throw new Error(
+          'Apply request interceptor failed, please check your interceptor'
+        );
+      }
     }
   });
 
@@ -92,10 +100,23 @@ function honoka(url, options = {}) {
 
           forEach(reversedInterceptors, interceptor => {
             if (interceptor.response) {
-              honoka.response = response = interceptor.response(
+              const interceptedResponse = interceptor.response(
                 responseData,
                 response
               );
+              if (
+                isArray(interceptedResponse) &&
+                interceptedResponse.length === 2
+              ) {
+                responseData = interceptedResponse[0];
+                honoka.response = response = interceptedResponse[1];
+              } else {
+                reject(
+                  new Error(
+                    'Apply response interceptor failed, please check your interceptor'
+                  )
+                );
+              }
             }
           });
 

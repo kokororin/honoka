@@ -156,7 +156,7 @@ describe('honoka', () => {
     honoka.interceptors.register({
       response: (data, response) => {
         response.test = 'test';
-        return response;
+        return [data, response];
       }
     });
     mockJsonResponse();
