@@ -153,8 +153,8 @@ const unregister = honoka.interceptors.register({
     if (data.status && data.status !== 'success') {
       alert('request error');
     }
-    // Modify the response object
-    return response;
+    // Modify the data & response object
+    return [data, response];
   }
 })
 
