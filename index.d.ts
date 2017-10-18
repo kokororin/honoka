@@ -68,7 +68,7 @@ export interface HonokaHeaders {
   set(name: string, value: string): void;
   entries(): IterableIterator<[string, string]>;
   forEach(
-    callback: (value: string, index: number, headers: Headers) => void,
+    callback: (value: string, index: number, headers: HonokaHeaders) => void,
     thisArg?: any
   ): void;
   keys(): IterableIterator<string>;
@@ -108,8 +108,15 @@ export interface HonokaDefaults {
   timeout?: number;
 }
 
+export interface HonokaInterceptors {
+  register(): () => void;
+  clear(): void;
+  get(): Array;
+}
+
 export interface HonokaStatic {
   defaults: HonokaDefaults;
+  interceptors: HonokaInterceptors;
   get(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
   delete(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
   head(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
