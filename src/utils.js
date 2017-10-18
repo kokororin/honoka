@@ -26,6 +26,10 @@ export function isArray(value) {
   return toString.call(value) === '[object Array]';
 }
 
+export function isString(value) {
+  return typeof value === 'string';
+}
+
 export function forEach(object, fn, context) {
   if (toString.call(fn) !== '[object Function]') {
     throw new TypeError('iterator must be a function');
@@ -100,12 +104,15 @@ export function normalizeHeaders(headers) {
   forEach(headers, (value, key) => {
     if (methods.indexOf(key) === -1) {
       const normalizedKey = ucFirst(
-        key.toLowerCase().replace('_', '-').replace(/-(\w)/g, ($0, $1) => {
-          return '-' + ucFirst($1);
-        })
+        key
+          .toLowerCase()
+          .replace('_', '-')
+          .replace(/-(\w)/g, ($0, $1) => {
+            return '-' + ucFirst($1);
+          })
       );
-      headers[normalizedKey] = value;
       delete headers[key];
+      headers[normalizedKey] = value;
     }
   });
 }

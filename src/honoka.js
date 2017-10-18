@@ -6,6 +6,7 @@ import {
   normalizeHeaders,
   isObject,
   isArray,
+  isString,
   forEach,
   reduce
 } from './utils';
@@ -51,6 +52,14 @@ function honoka(url, options = {}) {
   if (options.headers['Content-Type'] === 'application/json') {
     options.body = JSON.stringify(options.data);
   } else if (
+    isString(options.headers['Content-Type']) &&
+    options.headers['Content-Type'].indexOf(
+      'application/x-www-form-urlencoded'
+    ) > -1
+  ) {
+    const searchParams = new URLSearchParams(options.data);
+    options.body = searchParams;
+  } else if (
     options.data &&
     (options.method !== 'get' && options.method !== 'head')
   ) {
@@ -92,40 +101,43 @@ function honoka(url, options = {}) {
       .then(response => {
         honoka.response = response;
 
-        response.clone().text().then(responseData => {
-          const ct = response.headers.get('Content-Type');
-          if (ct && ct.match(/application\/json/i)) {
-            responseData = JSON.parse(responseData);
-          }
+        response
+          .clone()
+          .text()
+          .then(responseData => {
+            const ct = response.headers.get('Content-Type');
+            if (ct && ct.match(/application\/json/i)) {
+              responseData = JSON.parse(responseData);
+            }
 
-          forEach(reversedInterceptors, interceptor => {
-            if (interceptor.response) {
-              const interceptedResponse = interceptor.response(
-                responseData,
-                response
-              );
-              if (
-                isArray(interceptedResponse) &&
-                interceptedResponse.length === 2
-              ) {
-                responseData = interceptedResponse[0];
-                honoka.response = response = interceptedResponse[1];
-              } else {
-                reject(
-                  new Error(
-                    'Apply response interceptor failed, please check your interceptor'
-                  )
+            forEach(reversedInterceptors, interceptor => {
+              if (interceptor.response) {
+                const interceptedResponse = interceptor.response(
+                  responseData,
+                  response
                 );
+                if (
+                  isArray(interceptedResponse) &&
+                  interceptedResponse.length === 2
+                ) {
+                  responseData = interceptedResponse[0];
+                  honoka.response = response = interceptedResponse[1];
+                } else {
+                  reject(
+                    new Error(
+                      'Apply response interceptor failed, please check your interceptor'
+                    )
+                  );
+                }
               }
+            });
+
+            if (response.status >= 200 && response.status < 400) {
+              resolve(responseData);
+            } else {
+              reject(new Error('Not expected status code', response.status));
             }
           });
-
-          if (response.status >= 200 && response.status < 400) {
-            resolve(responseData);
-          } else {
-            reject(new Error('Not expected status code', response.status));
-          }
-        });
       })
       .catch(e => {
         reject(e);

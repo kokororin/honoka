@@ -1,5 +1,7 @@
 {
-  "extends": [
-    "kotori"
-  ]
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "extends": ["kotori"]
 }

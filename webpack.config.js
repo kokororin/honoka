@@ -4,8 +4,8 @@ const pkg = require('./package.json');
 
 const config = {
   entry: {
-    honoka: ['whatwg-fetch', './src/index'],
-    'honoka.min': ['whatwg-fetch', './src/index']
+    honoka: ['whatwg-fetch', 'url-search-params-polyfill', './src/index'],
+    'honoka.min': ['whatwg-fetch', 'url-search-params-polyfill', './src/index']
   },
   output: {
     path: path.join(__dirname, 'dist'),
