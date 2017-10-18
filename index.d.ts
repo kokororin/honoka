@@ -111,7 +111,7 @@ export interface HonokaDefaults {
 export interface HonokaInterceptors {
   register(): () => void;
   clear(): void;
-  get(): Array;
+  get(): Array<any>;
 }
 
 export interface HonokaStatic {
