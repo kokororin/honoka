@@ -63,6 +63,7 @@
   },
   "files": [
     "dist",
-    "honoka-node.js"
+    "honoka-node.js",
+    "index.d.ts"
   ]
 }
