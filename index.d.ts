@@ -115,16 +115,18 @@ export interface HonokaInterceptors {
 }
 
 export interface HonokaStatic {
+  (url: string, options?: HonokaRequestOptions): HonokaPromise;
   defaults: HonokaDefaults;
   interceptors: HonokaInterceptors;
-  get(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  delete(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  head(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  options(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  post(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  put(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
-  patch(url: string, options?: HonokaRequestOptions): Promise<HonokaPromise>;
+  get(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  delete(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  head(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  options(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  post(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  put(url: string, options?: HonokaRequestOptions): HonokaPromise;
+  patch(url: string, options?: HonokaRequestOptions): HonokaPromise;
   response: HonokaResponse;
+  version: string;
 }
 
 declare const honoka: HonokaStatic;
