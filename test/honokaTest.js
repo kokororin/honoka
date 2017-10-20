@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock';
+import { expect } from 'chai';
 import honoka from '../src/honoka';
 import {
   buildURL,
@@ -9,7 +10,7 @@ import {
 } from '../src/utils';
 import pkg from '../package.json';
 
-const baseURL = 'http://www.google.com';
+const BASE_URL = 'http://www.google.com';
 
 const mockJsonResponse = (url = '*', method = 'get') => {
   fetchMock.mock(url, {
@@ -22,32 +23,32 @@ const mockJsonResponse = (url = '*', method = 'get') => {
 };
 
 describe('honoka', () => {
-  afterEach(() => {
+  beforeEach(() => {
     fetchMock.restore();
     honoka.defaults.baseURL = '';
     honoka.interceptors.clear();
   });
 
   it('utils.buildURL() can build query strings', () => {
-    const url = buildURL(`${baseURL}/s`, { q: 'honoka' });
-    expect(url).to.equal(`${baseURL}/s?q=honoka`);
+    const url = buildURL(`${BASE_URL}/s`, { q: 'honoka' });
+    expect(url).to.equal(`${BASE_URL}/s?q=honoka`);
   });
 
   it('utils.buildURL() can build query strings with two parameters', () => {
-    const url = buildURL(`${baseURL}/s`, {
+    const url = buildURL(`${BASE_URL}/s`, {
       q: 'honoka',
       ie: 'UTF-8'
     });
-    expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
+    expect(url).to.equal(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
   });
 
   it('utils.buildURL() can build query strings with a query-given url', () => {
-    const url = buildURL(`${baseURL}/s?q=honoka`, { ie: 'UTF-8' });
-    expect(url).to.equal(`${baseURL}/s?q=honoka&ie=UTF-8`);
+    const url = buildURL(`${BASE_URL}/s?q=honoka`, { ie: 'UTF-8' });
+    expect(url).to.equal(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
   });
 
   it('utils.isAbsoluteURL() can determine whether url is absolute', () => {
-    expect(isAbsoluteURL(baseURL)).to.equal(true);
+    expect(isAbsoluteURL(BASE_URL)).to.equal(true);
     expect(isAbsoluteURL('/s')).to.equal(false);
   });
 
@@ -76,13 +77,13 @@ describe('honoka', () => {
 
   it('honoka() should return a body when status is 200', async () => {
     mockJsonResponse();
-    const data = await honoka(baseURL);
+    const data = await honoka(BASE_URL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
   it('honoka() should build query strings correctly', async () => {
-    mockJsonResponse(`${baseURL}/s?q=honoka&ie=UTF-8`);
-    const data = await honoka(`${baseURL}/s`, {
+    mockJsonResponse(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
+    const data = await honoka(`${BASE_URL}/s`, {
       data: {
         q: 'honoka',
         ie: 'UTF-8'
@@ -93,13 +94,13 @@ describe('honoka', () => {
 
   it('honoka() should get the body object when fetching a json', async () => {
     mockJsonResponse();
-    const data = await honoka(baseURL);
+    const data = await honoka(BASE_URL);
     expect(data.hello).to.equal('world');
   });
 
   it('honoka.response should return the fetch response object', async () => {
     mockJsonResponse();
-    await honoka(baseURL);
+    await honoka(BASE_URL);
     expect(honoka.response.headers.get('Content-Type')).to.equal(
       'application/json'
     );
@@ -107,7 +108,7 @@ describe('honoka', () => {
 
   it('honoka.get() should return a body when status is 200', async () => {
     mockJsonResponse();
-    const data = await honoka(baseURL);
+    const data = await honoka(BASE_URL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
@@ -115,7 +116,7 @@ describe('honoka', () => {
     fetchMock.mock('*', { status: 400 });
     let err;
     try {
-      await honoka(baseURL);
+      await honoka(BASE_URL);
     } catch (e) {
       err = e;
     }
@@ -129,7 +130,7 @@ describe('honoka', () => {
     fetchMock.mock('*', delay);
     let err;
     try {
-      await honoka(baseURL, {
+      await honoka(BASE_URL, {
         timeout: 500
       });
     } catch (e) {
@@ -148,7 +149,7 @@ describe('honoka', () => {
       }
     });
     mockJsonResponse('*', 'post');
-    const data = await honoka(baseURL);
+    const data = await honoka(BASE_URL);
     expect(data).to.deep.equal({ hello: 'world' });
   });
 
@@ -160,7 +161,7 @@ describe('honoka', () => {
       }
     });
     mockJsonResponse();
-    await honoka(baseURL);
+    await honoka(BASE_URL);
     expect(honoka.response.test).to.equal('test');
   });
 
@@ -177,7 +178,7 @@ describe('honoka', () => {
     mockJsonResponse((url, options) => {
       return options.body === JSON.stringify({ hello: 'world' });
     }, 'post');
-    const data = await honoka.post(baseURL, {
+    const data = await honoka.post(BASE_URL, {
       data: {
         hello: 'world'
       }
@@ -186,8 +187,8 @@ describe('honoka', () => {
   });
 
   it('honoka.defaults should work', async () => {
-    honoka.defaults.baseURL = baseURL;
-    mockJsonResponse(`${baseURL}/s`);
+    honoka.defaults.baseURL = BASE_URL;
+    mockJsonResponse(`${BASE_URL}/s`);
     const data = await honoka('/s');
     expect(data).to.deep.equal({ hello: 'world' });
   });

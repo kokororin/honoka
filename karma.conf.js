@@ -1,3 +1,5 @@
+/* eslint prefer-arrow-callback: 0 */
+/* eslint object-shorthand: 0 */
 const path = require('path');
 const webpackCfg = require('./webpack.config');
 

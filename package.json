@@ -10,7 +10,8 @@
     "lint": "eslint ./src",
     "start": "webpack --watch",
     "test": "cross-env NODE_ENV=test karma start && npm run lint",
-    "coverage": "cat ./coverage/lcov.info | coveralls"
+    "coverage": "cat ./coverage/lcov.info | coveralls",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",

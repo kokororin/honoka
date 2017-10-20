@@ -1,4 +1,4 @@
-'use strict';
+/* eslint no-var: 0 */
 var nodeFetch = require('node-fetch');
 
 global.fetch = nodeFetch;
