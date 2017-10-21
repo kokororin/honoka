@@ -58,6 +58,11 @@ export interface HonokaRequestOptions {
   redirect?: HonokaRequestRedirect;
   integrity?: string;
   window?: null;
+  follow?: number;
+  timeout?: number;
+  compress?: boolean;
+  size?: number;
+  agent?: any;
 }
 
 export interface HonokaHeaders {
@@ -109,7 +114,7 @@ export interface HonokaDefaults {
 }
 
 export interface HonokaInterceptors {
-  register(): () => void;
+  register(interceptors: any): () => void;
   clear(): void;
   get(): Array<any>;
 }
