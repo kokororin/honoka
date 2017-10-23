@@ -2,12 +2,12 @@
   "name": "honoka",
   "version": "0.4.8",
   "description": "Just a fetch() API wrapper for both Browser and Node.js.",
-  "main": "honoka-node.js",
-  "browser": "dist/honoka.js",
-  "unpkg": "dist/honoka.min.js",
+  "main": "index.js",
+  "browser": "lib/honoka.js",
+  "unpkg": "lib/honoka.min.js",
   "typings": "index.d.ts",
   "scripts": {
-    "build": "webpack --progress",
+    "build": "cross-env NODE_ENV=production webpack --progress",
     "lint": "eslint ./src",
     "start": "webpack --watch",
     "test": "cross-env NODE_ENV=test karma start && npm run lint",
@@ -45,6 +45,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.1.1",
+    "clean-webpack-plugin": "^0.1.17",
     "coveralls": "^2.13.1",
     "cross-env": "^5.0.5",
     "eslint": "^4.4.1",
@@ -64,8 +65,8 @@
     "webpack": "^3.5.3"
   },
   "files": [
-    "dist",
-    "honoka-node.js",
+    "lib",
+    "index.js",
     "index.d.ts"
   ]
 }

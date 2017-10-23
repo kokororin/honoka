@@ -1,27 +1,29 @@
 const path = require('path');
 const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const pkg = require('./package.json');
 
 const config = {
   entry: {
     honoka: ['./src/index'],
     'honoka.min': ['./src/index'],
-    'honoka-with-polyfill': [
+    'honoka-bundle': [
       'whatwg-fetch',
       'url-search-params-polyfill',
       './src/index'
     ],
-    'honoka-with-polyfill.min': [
+    'honoka-bundle.min': [
       'whatwg-fetch',
       'url-search-params-polyfill',
       './src/index'
     ]
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'lib'),
     filename: '[name].js',
     library: 'honoka',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   resolve: { extensions: ['.js'] },
   devtool: '#source-map',
@@ -55,6 +57,10 @@ const config = {
     })
   ]
 };
+
+if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(new CleanWebpackPlugin(['lib']));
+}
 
 if (process.env.NODE_ENV === 'test') {
   config.module.rules.push({

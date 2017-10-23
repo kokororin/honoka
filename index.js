@@ -6,4 +6,4 @@ global.Response = nodeFetch.Response;
 global.Headers = nodeFetch.Headers;
 global.Request = nodeFetch.Request;
 
-module.exports = require('./dist/honoka');
+module.exports = require('./lib/honoka');
