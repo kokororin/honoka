@@ -24,7 +24,7 @@ $ npm install honoka
 Using cdn:
 
 ```html
-<script src="https://unpkg.com/honoka/dist/honoka.min.js"></script>
+<script src="https://unpkg.com/honoka/lib/honoka.min.js"></script>
 ```
 
 ## Example
