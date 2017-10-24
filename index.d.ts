@@ -114,8 +114,16 @@ export interface HonokaDefaults {
   headers?: any;
 }
 
+export interface HonokaInterceptorOptions {
+  request?(options: HonokaRequestOptions): HonokaRequestOptions;
+  response(
+    data: HonokaResponseData,
+    response: HonokaResponse
+  ): [HonokaResponseData, HonokaResponse];
+}
+
 export interface HonokaInterceptors {
-  register(interceptors: any): () => void;
+  register(interceptors: HonokaInterceptorOptions): () => void;
   clear(): void;
   get(): Array<any>;
 }
