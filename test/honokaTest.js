@@ -3,6 +3,11 @@ import honoka from '../src/honoka';
 import pkg from '../package.json';
 
 const EXPRESS_BASE_URL = 'http://localhost:3001';
+const GET_QUERY = {
+  q: 'honoka',
+  ie: 'UTF-8'
+};
+const POST_DATA = { name: 'honoka' };
 
 describe('honoka', () => {
   beforeEach(() => {
@@ -20,19 +25,35 @@ describe('honoka', () => {
   });
 
   it('honoka() should build query strings correctly', async () => {
-    const query = {
-      q: 'honoka',
-      ie: 'UTF-8'
-    };
     const data = await honoka(`${EXPRESS_BASE_URL}/get/query`, {
-      data: query
+      data: GET_QUERY
     });
-    expect(data).to.deep.equal(query);
+    expect(data).to.deep.equal(GET_QUERY);
   });
 
   it('honoka() should convert JSON Object when Content-Type is application/json', async () => {
     const data = await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(data.hello).to.equal('world');
+  });
+
+  it('honoka.post() should post JSON correctly', async () => {
+    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: POST_DATA
+    });
+    expect(data).to.deep.equal(POST_DATA);
+  });
+
+  it('honoka.post() should post params correctly', async () => {
+    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: POST_DATA
+    });
+    expect(data).to.deep.equal(POST_DATA);
   });
 
   it('honoka.response should return the fetch response object', async () => {

@@ -6,6 +6,7 @@ const sleep = require('system-sleep');
 function server(app, log) {
   log.info('Visiting');
   app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
 
   app.all('*', function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -13,6 +14,7 @@ function server(app, log) {
       'Access-Control-Allow-Methods',
       'PUT, POST, GET, DELETE, OPTIONS'
     );
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.header('X-Powered-By', 'Honoka Express Server');
 
     next();
@@ -42,6 +44,10 @@ function server(app, log) {
 
   app.get('/get/query', function(req, res) {
     res.json(req.query);
+  });
+
+  app.post('/post/param', function(req, res) {
+    res.json(req.body);
   });
 }
 
