@@ -11,6 +11,7 @@ Just a fetch() API wrapper for both Browser and Node.js.
 - Same as [fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - Timeout
 - Interceptors before request and response
+- Transform/convert request and response data
 
 
 ## Installing
@@ -161,6 +162,36 @@ const unregister = honoka.interceptors.register({
 // Unregister your interceptor
 unregister();
 ```
+
+## Promises 
+
+honoka depends on a native ES6 Promise implementation to be [supported](http://caniuse.com/promises).  
+If your environment doesn't support ES6 Promises, you can [polyfill](https://github.com/jakearchibald/es6-promise).
+
+## TypeScript
+
+honoka includes [TypeScript](http://typescriptlang.org) definitions.
+```typescript
+import honoka from 'honoka';
+honoka.get('/user?ID=12345');
+```
+
+## Polyfills
+The fetch() function is a Promise-based mechanism for programmatically making web requests in the browser.  
+honoka depends on a fetch implementation to be [supported](http://caniuse.com/fetch).  
+If your environment doesn't support fetch, you can use the polyfilled version of honoka.
+
+Snippet for webpack users : 
+```json5
+{
+  resolve: {
+    alias: {
+      honoka: 'honoka/lib/honoka.bundle.js'
+    }
+  }
+}
+```
+
 
 ## Changelog
 
