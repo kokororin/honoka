@@ -1,74 +1,13 @@
-import fetchMock from 'fetch-mock';
 import { expect } from 'chai';
 import honoka from '../src/honoka';
-import {
-  buildURL,
-  isAbsoluteURL,
-  normalizeHeaders,
-  trimStart,
-  trimEnd
-} from '../src/utils';
 import pkg from '../package.json';
 
-const BASE_URL = 'http://www.google.com';
-
-const mockJsonResponse = (url = '*', method = 'get') => {
-  fetchMock.mock(url, {
-    body: { hello: 'world' },
-    method,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-};
+const EXPRESS_BASE_URL = 'http://localhost:3001';
 
 describe('honoka', () => {
   beforeEach(() => {
-    fetchMock.restore();
     honoka.defaults.baseURL = '';
     honoka.interceptors.clear();
-  });
-
-  it('utils.buildURL() can build query strings', () => {
-    const url = buildURL(`${BASE_URL}/s`, { q: 'honoka' });
-    expect(url).to.equal(`${BASE_URL}/s?q=honoka`);
-  });
-
-  it('utils.buildURL() can build query strings with two parameters', () => {
-    const url = buildURL(`${BASE_URL}/s`, {
-      q: 'honoka',
-      ie: 'UTF-8'
-    });
-    expect(url).to.equal(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
-  });
-
-  it('utils.buildURL() can build query strings with a query-given url', () => {
-    const url = buildURL(`${BASE_URL}/s?q=honoka`, { ie: 'UTF-8' });
-    expect(url).to.equal(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
-  });
-
-  it('utils.isAbsoluteURL() can determine whether url is absolute', () => {
-    expect(isAbsoluteURL(BASE_URL)).to.equal(true);
-    expect(isAbsoluteURL('/s')).to.equal(false);
-  });
-
-  it('utils.normalizeHeaders() can normalize headers', () => {
-    const headers = {
-      'content-type': 'application/json'
-    };
-    normalizeHeaders(headers);
-    expect(headers).to.have.property('Content-Type', 'application/json');
-    expect(headers).to.not.have.property('content-type');
-  });
-
-  it('utils.trimStart() should remove leading whitespace or specified characters', () => {
-    const string = trimStart('/honoka', '/');
-    expect(string).to.equal('honoka');
-  });
-
-  it('utils.trimEnd() should remove trailing whitespace or specified characters', () => {
-    const string = trimEnd('honoka/', '/');
-    expect(string).to.equal('honoka');
   });
 
   it('honoka.version should return a version string', () => {
@@ -76,47 +15,37 @@ describe('honoka', () => {
   });
 
   it('honoka() should return a body when status is 200', async () => {
-    mockJsonResponse();
-    const data = await honoka(BASE_URL);
-    expect(data).to.deep.equal({ hello: 'world' });
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/ok`);
+    expect(data).to.equal('ok');
   });
 
   it('honoka() should build query strings correctly', async () => {
-    mockJsonResponse(`${BASE_URL}/s?q=honoka&ie=UTF-8`);
-    const data = await honoka(`${BASE_URL}/s`, {
-      data: {
-        q: 'honoka',
-        ie: 'UTF-8'
-      }
+    const query = {
+      q: 'honoka',
+      ie: 'UTF-8'
+    };
+    const data = await honoka(`${EXPRESS_BASE_URL}/get/query`, {
+      data: query
     });
-    expect(data).to.deep.equal({ hello: 'world' });
+    expect(data).to.deep.equal(query);
   });
 
-  it('honoka() should get the body object when fetching a json', async () => {
-    mockJsonResponse();
-    const data = await honoka(BASE_URL);
+  it('honoka() should convert JSON Object when Content-Type is application/json', async () => {
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(data.hello).to.equal('world');
   });
 
   it('honoka.response should return the fetch response object', async () => {
-    mockJsonResponse();
-    await honoka(BASE_URL);
-    expect(honoka.response.headers.get('Content-Type')).to.equal(
-      'application/json'
-    );
-  });
-
-  it('honoka.get() should return a body when status is 200', async () => {
-    mockJsonResponse();
-    const data = await honoka(BASE_URL);
-    expect(data).to.deep.equal({ hello: 'world' });
+    await honoka(`${EXPRESS_BASE_URL}/with/json`);
+    expect(
+      honoka.response.headers.get('Content-Type').startsWith('application/json')
+    ).to.equal(true);
   });
 
   it('honoka() should throw Error when status >= 400', async () => {
-    fetchMock.mock('*', { status: 400 });
     let err;
     try {
-      await honoka(BASE_URL);
+      await honoka(`${EXPRESS_BASE_URL}/with/error`);
     } catch (e) {
       err = e;
     }
@@ -126,11 +55,9 @@ describe('honoka', () => {
   });
 
   it('honoka() should throw Error when timeout', async () => {
-    const delay = new Promise(resolve => setTimeout(resolve, 1000));
-    fetchMock.mock('*', delay);
     let err;
     try {
-      await honoka(BASE_URL, {
+      await honoka(`${EXPRESS_BASE_URL}/with/timeout`, {
         timeout: 500
       });
     } catch (e) {
@@ -148,9 +75,8 @@ describe('honoka', () => {
         return options;
       }
     });
-    mockJsonResponse('*', 'post');
-    const data = await honoka(BASE_URL);
-    expect(data).to.deep.equal({ hello: 'world' });
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/post`);
+    expect(data).to.equal('post');
   });
 
   it('honoka.interceptors.register() should register a response interceptor', async () => {
@@ -160,8 +86,7 @@ describe('honoka', () => {
         return [data, response];
       }
     });
-    mockJsonResponse();
-    await honoka(BASE_URL);
+    await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(honoka.response.test).to.equal('test');
   });
 
@@ -174,22 +99,9 @@ describe('honoka', () => {
     expect(honoka.interceptors.get().length).to.equal(0);
   });
 
-  it('honoka() should convert JSON Object when Content-Type is application/json', async () => {
-    mockJsonResponse((url, options) => {
-      return options.body === JSON.stringify({ hello: 'world' });
-    }, 'post');
-    const data = await honoka.post(BASE_URL, {
-      data: {
-        hello: 'world'
-      }
-    });
-    expect(data).to.deep.equal({ hello: 'world' });
-  });
-
   it('honoka.defaults should work', async () => {
-    honoka.defaults.baseURL = BASE_URL;
-    mockJsonResponse(`${BASE_URL}/s`);
-    const data = await honoka('/s');
-    expect(data).to.deep.equal({ hello: 'world' });
+    honoka.defaults.baseURL = EXPRESS_BASE_URL;
+    const data = await honoka('/with/ok');
+    expect(data).to.deep.equal('ok');
   });
 });
