@@ -1,6 +1,7 @@
 /* eslint prefer-arrow-callback: 0 */
 /* eslint object-shorthand: 0 */
 const bodyParser = require('body-parser');
+const upload = require('multer')();
 const sleep = require('system-sleep');
 
 function server(app, log) {
@@ -47,6 +48,10 @@ function server(app, log) {
   });
 
   app.post('/post/param', function(req, res) {
+    res.json(req.body);
+  });
+
+  app.post('/post/formdata', upload.array(), function(req, res) {
     res.json(req.body);
   });
 }

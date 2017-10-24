@@ -56,6 +56,21 @@ describe('honoka', () => {
     expect(data).to.deep.equal(POST_DATA);
   });
 
+  it('honoka.post() should post FormData correctly', async () => {
+    const formData = new FormData();
+    // eslint-disable-next-line guard-for-in
+    for (const key in POST_DATA) {
+      formData.append(key, POST_DATA[key]);
+    }
+    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/formdata`, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      data: formData
+    });
+    expect(data).to.deep.equal(POST_DATA);
+  });
+
   it('honoka.response should return the fetch response object', async () => {
     await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(
