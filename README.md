@@ -186,7 +186,7 @@ Snippet for webpack users :
 {
   resolve: {
     alias: {
-      honoka: 'honoka/lib/honoka.bundle.js'
+      honoka: 'honoka/lib/honoka-bundle.js'
     }
   }
 }
