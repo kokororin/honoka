@@ -49,16 +49,19 @@ function honoka(url, options = {}) {
     delete options.headers[method];
   });
 
-  if (options.headers['Content-Type'] === 'application/json') {
+  const isContentTypeString = isString(options.headers['Content-Type']);
+
+  if (
+    isContentTypeString &&
+    options.headers['Content-Type'].match(/application\/json/)
+  ) {
     options.body = JSON.stringify(options.data);
   } else if (
-    isString(options.headers['Content-Type']) &&
-    options.headers['Content-Type'].indexOf(
-      'application/x-www-form-urlencoded'
-    ) > -1
+    isContentTypeString &&
+    options.headers['Content-Type'].match(/application\/x-www-form-urlencoded/)
   ) {
     const searchParams = new URLSearchParams(options.data);
-    options.body = searchParams;
+    options.body = searchParams.toString();
   } else if (
     options.data &&
     (options.method !== 'get' && options.method !== 'head')
@@ -66,7 +69,10 @@ function honoka(url, options = {}) {
     options.body = options.data;
   }
 
-  if (options.headers['Content-Type'] === 'multipart/form-data') {
+  if (
+    isContentTypeString &&
+    options.headers['Content-Type'].match(/multipart\/form-data/)
+  ) {
     delete options.headers['Content-Type'];
   }
 
