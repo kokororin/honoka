@@ -7,6 +7,7 @@ import {
   isObject,
   isArray,
   isString,
+  isFormData,
   forEach,
   reduce
 } from './utils';
@@ -53,12 +54,12 @@ function honoka(url, options = {}) {
 
   if (
     isContentTypeString &&
-    options.headers['Content-Type'].match(/application\/json/)
+    options.headers['Content-Type'].match(/application\/json/i)
   ) {
     options.body = JSON.stringify(options.data);
   } else if (
     isContentTypeString &&
-    options.headers['Content-Type'].match(/application\/x-www-form-urlencoded/)
+    options.headers['Content-Type'].match(/application\/x-www-form-urlencoded/i)
   ) {
     const searchParams = new URLSearchParams(options.data);
     options.body = searchParams.toString();
@@ -70,8 +71,9 @@ function honoka(url, options = {}) {
   }
 
   if (
-    isContentTypeString &&
-    options.headers['Content-Type'].match(/multipart\/form-data/)
+    isFormData(options.data) ||
+    (isContentTypeString &&
+      options.headers['Content-Type'].match(/multipart\/form-data/i))
   ) {
     delete options.headers['Content-Type'];
   }
@@ -111,8 +113,8 @@ function honoka(url, options = {}) {
           .clone()
           .text()
           .then(responseData => {
-            const ct = response.headers.get('Content-Type');
-            if (ct && ct.match(/application\/json/i)) {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.match(/application\/json/i)) {
               responseData = JSON.parse(responseData);
             }
 

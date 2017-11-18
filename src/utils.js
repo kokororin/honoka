@@ -30,6 +30,10 @@ export function isString(value) {
   return typeof value === 'string';
 }
 
+export function isFormData(value) {
+  return typeof FormData !== 'undefined' && value instanceof FormData;
+}
+
 export function forEach(object, fn, context) {
   if (toString.call(fn) !== '[object Function]') {
     throw new TypeError('iterator must be a function');
