@@ -5,14 +5,14 @@ const symbolRegex = /([[\]().?/*{}+$^:])/g;
 
 export function trimStart(str, charlist = spaceChars) {
   charlist = (charlist + '').replace(symbolRegex, '$1');
-  const re = new RegExp('^[' + charlist + ']+', 'g');
-  return (str + '').replace(re, '');
+  const re = new RegExp(`^[${charlist}]+`, 'g');
+  return String(str).replace(re, '');
 }
 
 export function trimEnd(str, charlist = spaceChars) {
   charlist = (charlist + '').replace(symbolRegex, '\\$1');
-  const re = new RegExp('[' + charlist + ']+$', 'g');
-  return (str + '').replace(re, '');
+  const re = new RegExp(`[${charlist}]+$`, 'g');
+  return String(str).replace(re, '');
 }
 
 const toString = Object.prototype.toString;
@@ -101,7 +101,7 @@ export function buildURL(url, params) {
 
 export function normalizeHeaders(headers) {
   const ucFirst = str => {
-    str += '';
+    str = String(str);
     return str.charAt(0).toUpperCase() + str.substr(1);
   };
 

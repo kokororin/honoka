@@ -111,6 +111,7 @@ export interface HonokaPromise extends Promise<HonokaResponseData> {}
 export interface HonokaDefaults {
   baseURL?: string;
   timeout?: number;
+  method?: string;
   headers?: any;
 }
 

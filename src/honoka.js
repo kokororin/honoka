@@ -28,7 +28,7 @@ function honoka(url, options = {}) {
   }
 
   if (!isAbsoluteURL(url)) {
-    url = trimEnd(options.baseURL, '/') + '/' + trimStart(url, '/');
+    url = `${trimEnd(options.baseURL, '/')}/${trimStart(url, '/')}`;
   }
 
   if (options.method === 'get' && isObject(options.data)) {
@@ -46,9 +46,7 @@ function honoka(url, options = {}) {
     };
   }
 
-  forEach(methods, method => {
-    delete options.headers[method];
-  });
+  forEach(methods, method => delete options.headers[method]);
 
   const isContentTypeString = isString(options.headers['Content-Type']);
 
@@ -143,7 +141,7 @@ function honoka(url, options = {}) {
             if (response.status >= 200 && response.status < 400) {
               resolve(responseData);
             } else {
-              reject(new Error('Not expected status code', response.status));
+              reject(new Error('Not expected status code'));
             }
           });
       })

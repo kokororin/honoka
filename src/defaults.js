@@ -2,8 +2,8 @@ import { forEach } from './utils';
 
 // honoka default options
 const defaults = {
-  timeout: 0,
   baseURL: '',
+  timeout: 0,
   method: 'get',
   headers: {}
 };
