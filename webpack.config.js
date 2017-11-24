@@ -7,16 +7,8 @@ const config = {
   entry: {
     honoka: ['./src/index'],
     'honoka.min': ['./src/index'],
-    'honoka-bundle': [
-      'whatwg-fetch',
-      'url-search-params-polyfill',
-      './src/index'
-    ],
-    'honoka-bundle.min': [
-      'whatwg-fetch',
-      'url-search-params-polyfill',
-      './src/index'
-    ]
+    'honoka-bundle': ['whatwg-fetch', './src/index'],
+    'honoka-bundle.min': ['whatwg-fetch', './src/index']
   },
   output: {
     path: path.join(__dirname, 'lib'),
@@ -53,7 +45,9 @@ const config = {
       comments: false
     }),
     new webpack.BannerPlugin({
-      banner: `${pkg.name} v${pkg.version} | (c) ${new Date().getFullYear()} by ${pkg.author}`
+      banner: `${pkg.name} v${
+        pkg.version
+      } | (c) ${new Date().getFullYear()} by ${pkg.author}`
     })
   ]
 };

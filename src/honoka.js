@@ -1,3 +1,4 @@
+import querystring from 'querystring';
 import {
   trimStart,
   trimEnd,
@@ -59,8 +60,7 @@ function honoka(url, options = {}) {
     isContentTypeString &&
     options.headers['Content-Type'].match(/application\/x-www-form-urlencoded/i)
   ) {
-    const searchParams = new URLSearchParams(options.data);
-    options.body = searchParams.toString();
+    options.body = querystring.stringify(options.data);
   } else if (
     options.data &&
     (options.method !== 'get' && options.method !== 'head')

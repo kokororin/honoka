@@ -34,7 +34,7 @@
   "homepage": "https://github.com/kokororin/honoka#readme",
   "dependencies": {
     "node-fetch": "^1.7.2",
-    "url-search-params-polyfill": "^2.0.1",
+    "querystring": "^0.2.0",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
