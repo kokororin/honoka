@@ -4,8 +4,9 @@
   "description": "Just a fetch() API wrapper for both Browser and Node.js.",
   "main": "index.js",
   "browser": "lib/honoka.js",
-  "unpkg": "lib/honoka.min.js",
-  "typings": "index.d.ts",
+  "unpkg": "lib/honoka-bundle.min.js",
+  "jsdelivr": "lib/honoka-bundle.min.js",
+  "typings": "types/index.d.ts",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --progress",
     "lint": "eslint ./src",
@@ -70,6 +71,6 @@
   "files": [
     "lib",
     "index.js",
-    "index.d.ts"
+    "types/*.d.ts"
   ]
 }
