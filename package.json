@@ -12,7 +12,10 @@
     "build": "cross-env NODE_ENV=production webpack --progress",
     "lint": "eslint ./src",
     "start": "webpack --watch",
-    "test": "cross-env NODE_ENV=test karma start && npm run lint",
+    "test": "npm run test:browser && npm run test:node",
+    "posttest": "npm run lint",
+    "test:browser": "cross-env NODE_ENV=test karma start",
+    "test:node": "cross-env NODE_ENV=test:node mocha --compilers js:babel-register --require babel-polyfill --timeout 30000 test/**/*.mocha.js",
     "coverage": "cat ./coverage/lcov.info | coveralls",
     "prepublishOnly": "npm run build"
   },
