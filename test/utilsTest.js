@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import {
   buildURL,
   isAbsoluteURL,
+  isNode,
   normalizeHeaders,
   trimStart,
   trimEnd
@@ -50,5 +51,9 @@ describe('utils', () => {
   it('utils.trimEnd() should remove trailing whitespace or specified characters', () => {
     const string = trimEnd('honoka/', '/');
     expect(string).to.equal('honoka');
+  });
+
+  it('utils.isNode() should return false', () => {
+    expect(isNode()).to.equal(false);
   });
 });

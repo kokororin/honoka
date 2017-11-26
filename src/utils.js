@@ -34,6 +34,14 @@ export function isFormData(value) {
   return typeof FormData !== 'undefined' && value instanceof FormData;
 }
 
+export function isNode() {
+  return !!(
+    typeof process !== 'undefined' &&
+    process.versions &&
+    process.versions.node
+  );
+}
+
 export function forEach(object, fn, context) {
   if (toString.call(fn) !== '[object Function]') {
     throw new TypeError('iterator must be a function');

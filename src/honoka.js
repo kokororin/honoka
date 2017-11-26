@@ -9,12 +9,17 @@ import {
   isArray,
   isString,
   isFormData,
+  isNode,
   forEach,
   reduce
 } from './utils';
 import defaults from './defaults';
 import methods from './methods';
 import interceptors from './interceptors';
+
+if (!isNode()) {
+  require('whatwg-fetch');
+}
 
 function honoka(url, options = {}) {
   options = {

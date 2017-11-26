@@ -6,14 +6,12 @@ const pkg = require('./package.json');
 const config = {
   entry: {
     honoka: ['./src/index'],
-    'honoka.min': ['./src/index'],
-    'honoka-bundle': ['whatwg-fetch', './src/index'],
-    'honoka-bundle.min': ['whatwg-fetch', './src/index']
+    'honoka.min': ['./src/index']
   },
   output: {
     path: path.join(__dirname, 'lib'),
     filename: '[name].js',
-    library: 'honoka',
+    library: pkg.name,
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -45,9 +43,10 @@ const config = {
       comments: false
     }),
     new webpack.BannerPlugin({
-      banner: `${pkg.name} v${
-        pkg.version
-      } | (c) ${new Date().getFullYear()} by ${pkg.author}`
+      banner: `${pkg.name} v${pkg.version}
+(c) ${new Date().getFullYear()} ${pkg.author}
+Released under the ${pkg.license} License.
+${pkg.homepage}`
     })
   ]
 };
