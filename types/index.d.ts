@@ -117,7 +117,7 @@ export interface HonokaDefaults {
 
 export interface HonokaInterceptorOptions {
   request?(options: HonokaRequestOptions): HonokaRequestOptions;
-  response(
+  response?(
     data: HonokaResponseData,
     response: HonokaResponse
   ): [HonokaResponseData, HonokaResponse];
