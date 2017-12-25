@@ -1,4 +1,4 @@
-import querystring from 'querystring';
+import qsEncode from 'querystring/encode';
 import {
   trimStart,
   trimEnd,
@@ -65,7 +65,7 @@ function honoka(url, options = {}) {
     isContentTypeString &&
     options.headers['Content-Type'].match(/application\/x-www-form-urlencoded/i)
   ) {
-    options.body = querystring.stringify(options.data);
+    options.body = qsEncode(options.data);
   } else if (
     options.data &&
     (options.method !== 'get' && options.method !== 'head')
