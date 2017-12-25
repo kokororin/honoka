@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 const pkg = require('./package.json');
 
 const config = {
@@ -53,6 +55,14 @@ ${pkg.homepage}`
 
 if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new CleanWebpackPlugin(['lib']));
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: path.join(__dirname, 'report.html'),
+      openAnalyzer: false,
+      generateStatsFile: false
+    })
+  );
 }
 
 if (process.env.NODE_ENV === 'test') {
