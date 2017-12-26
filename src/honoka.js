@@ -1,3 +1,5 @@
+import forEach from 'foreach';
+import reduce from 'array-reduce';
 import qsEncode from 'querystring/encode';
 import {
   trimStart,
@@ -9,9 +11,7 @@ import {
   isArray,
   isString,
   isFormData,
-  isNode,
-  forEach,
-  reduce
+  isNode
 } from './utils';
 import defaults from './defaults';
 import methods from './methods';

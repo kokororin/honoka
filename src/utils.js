@@ -1,3 +1,4 @@
+import forEach from 'foreach';
 import methods from './methods';
 
 const spaceChars = ' \\s\u00A0';
@@ -16,7 +17,6 @@ export function trimEnd(str, charlist = spaceChars) {
 }
 
 const toString = Object.prototype.toString;
-const hasOwn = Object.prototype.hasOwnProperty;
 
 export function isObject(value) {
   return value !== null && typeof value === 'object';
@@ -35,53 +35,14 @@ export function isFormData(value) {
 }
 
 export function isNode() {
-  return !!(
+  if (
     typeof global.process !== 'undefined' &&
-    global.process.versions &&
-    global.process.versions.node
-  );
-}
-
-export function forEach(object, fn, context) {
-  if (toString.call(fn) !== '[object Function]') {
-    throw new TypeError('iterator must be a function');
+    /* istanbul ignore next */ global.process.versions &&
+    /* istanbul ignore next */ global.process.versions.node
+  ) {
+    /* istanbul ignore next */ return true;
   }
-
-  const l = object.length;
-  if (l === +l) {
-    for (let i = 0; i < l; i++) {
-      fn.call(context, object[i], i, object);
-    }
-  } else {
-    for (const k in object) {
-      if (Object.prototype.hasOwnProperty.call(object, k)) {
-        fn.call(context, object[k], k, object);
-      }
-    }
-  }
-}
-
-export function reduce(array, fn, initialValue) {
-  let hasAcc = arguments.length >= 3;
-  if (hasAcc && array.reduce) {
-    return array.reduce(fn, initialValue);
-  }
-  if (array.reduce) {
-    return array.reduce(fn);
-  }
-
-  for (let i = 0; i < array.length; i++) {
-    if (!hasOwn.call(array, i)) {
-      continue;
-    }
-    if (!hasAcc) {
-      initialValue = array[i];
-      hasAcc = true;
-      continue;
-    }
-    initialValue = fn(initialValue, array[i], i);
-  }
-  return initialValue;
+  return false;
 }
 
 export function isAbsoluteURL(url) {

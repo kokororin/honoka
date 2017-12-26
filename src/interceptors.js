@@ -1,4 +1,3 @@
-// honoka interceptors injections
 const interceptorContainer = [];
 
 function register(interceptor) {

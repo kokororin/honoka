@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === 'test') {
   config.module.rules.push({
     test: /\.(js|jsx)$/,
     enforce: 'post',
-    exclude: /node_modules|test/,
+    exclude: /node_modules|test|src\/interceptors\.js/,
     loader: 'istanbul-instrumenter-loader',
     options: {
       esModules: true

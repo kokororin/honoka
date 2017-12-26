@@ -1,5 +1,4 @@
-import { forEach } from './utils';
-
+import forEach from 'foreach';
 // honoka default options
 const defaults = {
   baseURL: '',

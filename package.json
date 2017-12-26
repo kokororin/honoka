@@ -37,6 +37,8 @@
   },
   "homepage": "https://github.com/kokororin/honoka#readme",
   "dependencies": {
+    "array-reduce": "^0.0.0",
+    "foreach": "^2.0.5",
     "node-fetch": "^1.7.2",
     "querystring": "^0.2.0",
     "whatwg-fetch": "^2.0.3"

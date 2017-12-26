@@ -64,6 +64,18 @@ describe('honoka', () => {
     expect(data instanceof ArrayBuffer).to.equal(true);
   });
 
+  it('honoka() should throw Error when dataType is "buffer"', async () => {
+    let err;
+    try {
+      await honoka(`${EXPRESS_BASE_URL}/with/blob`, { dataType: 'buffer' });
+    } catch (e) {
+      err = e;
+    }
+    expect(() => {
+      throw err;
+    }).to.throw(/"buffer" is not supported in browser/);
+  });
+
   it('honoka.post() should post JSON correctly', async () => {
     const data = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
       headers: {
