@@ -43,11 +43,25 @@ describe('honoka', () => {
     expect(data.hello).to.equal('world');
   });
 
+  it('honoka() should transform Text when dataType is "text"', async () => {
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/ok`, {
+      dataType: 'text'
+    });
+    expect(data).to.equal('ok');
+  });
+
   it('honoka() should transform Blob Object when dataType is "blob"', async () => {
     const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
       dataType: 'blob'
     });
     expect(data instanceof Blob).to.equal(true);
+  });
+
+  it('honoka() should transform ArrayBuffer Object when dataType is "arraybuffer"', async () => {
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
+      dataType: 'arraybuffer'
+    });
+    expect(data instanceof ArrayBuffer).to.equal(true);
   });
 
   it('honoka.post() should post JSON correctly', async () => {
