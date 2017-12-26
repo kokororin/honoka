@@ -110,49 +110,65 @@ function honoka(url, options = {}) {
 
     fetch(url, options)
       .then(response => {
-        honoka.response = response;
+        honoka.response = response.clone();
 
-        response
-          .clone()
-          .text()
-          .then(responseData => {
-            const contentType = response.headers.get('Content-Type');
-            if (contentType && contentType.match(/application\/json/i)) {
-              responseData = JSON.parse(responseData);
+        switch (options.dataType.toLowerCase()) {
+          case 'arraybuffer':
+            return honoka.response.arrayBuffer();
+          case 'blob':
+            return honoka.response.blob();
+          case 'json':
+            return honoka.response.json();
+          case 'buffer':
+            if (!isNode()) {
+              reject(new Error('"buffer" is not supported in browser'));
             }
-
-            forEach(reversedInterceptors, interceptor => {
-              if (interceptor.response) {
-                const interceptedResponse = interceptor.response(
-                  responseData,
-                  response
-                );
-                if (
-                  isArray(interceptedResponse) &&
-                  interceptedResponse.length === 2
-                ) {
-                  responseData = interceptedResponse[0];
-                  honoka.response = response = interceptedResponse[1];
-                } else {
-                  reject(
-                    new Error(
-                      'Apply response interceptor failed, please check your interceptor'
-                    )
-                  );
-                }
-              }
-            });
-
-            if (response.status >= 200 && response.status < 400) {
-              resolve(responseData);
-            } else {
-              reject(new Error('Not expected status code'));
-            }
-          });
+            return honoka.response.buffer();
+          case 'text':
+          default:
+            return honoka.response.text();
+          case '':
+          case 'auto':
+            return honoka.response.text();
+        }
       })
-      .catch(e => {
-        reject(e);
-      });
+      .then(responseData => {
+        if (options.dataType === '' || options.dataType === 'auto') {
+          const contentType = honoka.response.headers.get('Content-Type');
+          if (contentType && contentType.match(/application\/json/i)) {
+            responseData = JSON.parse(responseData);
+          }
+        }
+
+        forEach(reversedInterceptors, interceptor => {
+          if (interceptor.response) {
+            const interceptedResponse = interceptor.response(
+              responseData,
+              honoka.response
+            );
+            if (
+              isArray(interceptedResponse) &&
+              interceptedResponse.length === 2
+            ) {
+              responseData = interceptedResponse[0];
+              honoka.response = interceptedResponse[1];
+            } else {
+              reject(
+                new Error(
+                  'Apply response interceptor failed, please check your interceptor'
+                )
+              );
+            }
+          }
+        });
+
+        if (honoka.response.status >= 200 && honoka.response.status < 400) {
+          resolve(responseData);
+        } else {
+          reject(new Error('Not expected status code'));
+        }
+      })
+      .catch(reject);
   });
 }
 

@@ -29,6 +29,16 @@ function server(app, log) {
     res.json({ hello: 'world' });
   });
 
+  app.get('/with/blob', function(req, res) {
+    const data = 'R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+    const img = new Buffer(data, 'base64');
+    res.writeHead(200, {
+      'Content-Type': 'image/gif',
+      'Content-Length': img.length
+    });
+    res.end(img);
+  });
+
   app.get('/with/error', function(req, res) {
     res.status(400);
     res.send('error');

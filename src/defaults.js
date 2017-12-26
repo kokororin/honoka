@@ -5,7 +5,8 @@ const defaults = {
   baseURL: '',
   timeout: 0,
   method: 'get',
-  headers: {}
+  headers: {},
+  dataType: 'auto'
 };
 
 // set the default content-type of request methods

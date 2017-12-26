@@ -115,12 +115,31 @@ These are the available config options for making requests. Same as fetch() API.
 
 ```js
 {
+  // `method` is the request method to be used when making the request
+  method: 'get', // default
+
+  // `headers` are custom headers to be sent
+  headers: {'X-Requested-With': 'XMLHttpRequest'},
+
+  // `data` are the URL parameters or post body to be sent
+  data: {
+    ID: 12345
+  },
+
   // `baseURL` will be prepended to `url` unless `url` is absolute.
   baseURL: 'https://some-domain.com/api/',
 
   // `timeout` specifies the number of milliseconds before the request times out.
   // If the request takes longer than `timeout`, the request will be aborted.
-  timeout: 1000
+  timeout: 1000,
+
+  // `dataType` indicates the type of data that the server will respond with
+  // options are 'arraybuffer', 'blob', 'buffer', 'json', 'text', 'auto'
+  dataType: 'auto', // default
+
+  // Authentication credentials mode
+  // https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
+  credentials: 'omit' // default
 }
 ```
 

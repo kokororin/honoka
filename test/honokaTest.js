@@ -31,9 +31,23 @@ describe('honoka', () => {
     expect(data).to.deep.equal(GET_QUERY);
   });
 
-  it('honoka() should convert JSON Object when Content-Type is application/json', async () => {
+  it('honoka() should transform JSON Object when Content-Type is "application/json"', async () => {
     const data = await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(data.hello).to.equal('world');
+  });
+
+  it('honoka() should transform JSON Object when dataType is "json"', async () => {
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/json`, {
+      dataType: 'json'
+    });
+    expect(data.hello).to.equal('world');
+  });
+
+  it('honoka() should transform Blob Object when dataType is "blob"', async () => {
+    const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
+      dataType: 'blob'
+    });
+    expect(data instanceof Blob).to.equal(true);
   });
 
   it('honoka.post() should post JSON correctly', async () => {

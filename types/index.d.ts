@@ -45,10 +45,20 @@ type HonokaReferrerPolicy =
   | 'strict-origin-when-cross-origin'
   | 'unsafe-url';
 
+type HonokaDataType =
+  | ''
+  | 'auto'
+  | 'arraybuffer'
+  | 'blob'
+  | 'json'
+  | 'text'
+  | 'buffer';
+
 export interface HonokaRequestOptions {
   method?: string;
   headers?: HonokaHeaders;
   data?: any;
+  dataType?: HonokaDataType;
   body?: any;
   referrer?: string;
   referrerPolicy?: HonokaReferrerPolicy;
@@ -113,6 +123,7 @@ export interface HonokaDefaults {
   timeout?: number;
   method?: string;
   headers?: any;
+  dataType?: HonokaDataType;
 }
 
 export interface HonokaInterceptorOptions {
