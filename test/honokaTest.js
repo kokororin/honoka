@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import honoka from '../src/honoka';
 import pkg from '../package.json';
 
@@ -64,16 +65,9 @@ describe('honoka', () => {
     expect(data instanceof ArrayBuffer).to.equal(true);
   });
 
-  it('honoka() should throw Error when dataType is "buffer"', async () => {
-    let err;
-    try {
-      await honoka(`${EXPRESS_BASE_URL}/with/blob`, { dataType: 'buffer' });
-    } catch (e) {
-      err = e;
-    }
-    expect(() => {
-      throw err;
-    }).to.throw(/"buffer" is not supported in browser/);
+  it('honoka() should throw Error when dataType is "buffer"', () => {
+    expect(honoka(`${EXPRESS_BASE_URL}/with/blob`, { dataType: 'buffer' })).to
+      .be.rejected;
   });
 
   it('honoka.post() should post JSON correctly', async () => {
@@ -118,30 +112,16 @@ describe('honoka', () => {
     ).to.equal(true);
   });
 
-  it('honoka() should throw Error when status >= 400', async () => {
-    let err;
-    try {
-      await honoka(`${EXPRESS_BASE_URL}/with/error`);
-    } catch (e) {
-      err = e;
-    }
-    expect(() => {
-      throw err;
-    }).to.throw(/Not expected status code/);
+  it('honoka() should throw Error when status >= 400', () => {
+    expect(honoka(`${EXPRESS_BASE_URL}/with/error`)).to.be.rejected;
   });
 
-  it('honoka() should throw Error when timeout', async () => {
-    let err;
-    try {
-      await honoka(`${EXPRESS_BASE_URL}/with/timeout`, {
+  it('honoka() should throw Error when timeout', () => {
+    expect(
+      honoka(`${EXPRESS_BASE_URL}/with/timeout`, {
         timeout: 500
-      });
-    } catch (e) {
-      err = e;
-    }
-    expect(() => {
-      throw err;
-    }).to.throw(/Request timeout/);
+      })
+    ).to.be.rejected;
   });
 
   it('honoka.interceptors.register() should register a request interceptor', async () => {
@@ -173,6 +153,20 @@ describe('honoka', () => {
     expect(honoka.interceptors.get().length).to.equal(1);
     honoka.interceptors.clear();
     expect(honoka.interceptors.get().length).to.equal(0);
+  });
+
+  it('honoka should throw Error when request interceptor is not valid', () => {
+    honoka.interceptors.register({
+      request() {}
+    });
+    expect(() => honoka(`${EXPRESS_BASE_URL}/with/json`)).to.throw;
+  });
+
+  it('honoka should throw Error when response interceptor is not valid', () => {
+    honoka.interceptors.register({
+      response() {}
+    });
+    expect(honoka(`${EXPRESS_BASE_URL}/with/json`)).to.be.rejected;
   });
 
   it('honoka.defaults should work', async () => {

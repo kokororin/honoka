@@ -1,25 +1,20 @@
-const interceptorContainer = [];
+const interceptors = {};
+const container = [];
 
-function register(interceptor) {
-  interceptorContainer.push(interceptor);
+interceptors.register = interceptor => {
+  container.push(interceptor);
   return () => {
-    const index = interceptorContainer.indexOf(interceptor);
+    const index = container.indexOf(interceptor);
     if (index >= 0) {
-      interceptorContainer.splice(index, 1);
+      container.splice(index, 1);
     }
   };
-}
-
-function clear() {
-  interceptorContainer.length = 0;
-}
-
-function get() {
-  return interceptorContainer;
-}
-
-export default {
-  register,
-  clear,
-  get
 };
+
+interceptors.clear = () => {
+  container.length = 0;
+};
+
+interceptors.get = () => container;
+
+export default interceptors;
