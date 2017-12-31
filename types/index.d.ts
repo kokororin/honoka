@@ -70,6 +70,7 @@ export interface HonokaRequestOptions {
   window?: null;
   follow?: number;
   timeout?: number;
+  expectedStatus?(status: number): boolean;
   compress?: boolean;
   size?: number;
   agent?: any;
@@ -118,14 +119,6 @@ export interface HonokaResponse {
 
 export interface HonokaPromise extends Promise<HonokaResponseData> {}
 
-export interface HonokaDefaults {
-  baseURL?: string;
-  timeout?: number;
-  method?: string;
-  headers?: any;
-  dataType?: HonokaDataType;
-}
-
 export interface HonokaInterceptorOptions {
   request?(options: HonokaRequestOptions): HonokaRequestOptions;
   response?(
@@ -142,7 +135,7 @@ export interface HonokaInterceptors {
 
 export interface HonokaStatic {
   (url: string, options?: HonokaRequestOptions): HonokaPromise;
-  defaults: HonokaDefaults;
+  defaults: HonokaRequestOptions;
   interceptors: HonokaInterceptors;
   get(url: string, options?: HonokaRequestOptions): HonokaPromise;
   delete(url: string, options?: HonokaRequestOptions): HonokaPromise;

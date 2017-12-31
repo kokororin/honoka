@@ -162,7 +162,7 @@ function honoka(url, options = {}) {
           }
         });
 
-        if (honoka.response.status >= 200 && honoka.response.status < 400) {
+        if (options.expectedStatus(honoka.response.status)) {
           resolve(responseData);
         } else {
           reject(new Error('Not expected status code'));

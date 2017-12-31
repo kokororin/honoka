@@ -124,6 +124,14 @@ describe('honoka', () => {
     ).to.be.rejected;
   });
 
+  it('expectedStatus should work', () => {
+    expect(
+      honoka(`${EXPRESS_BASE_URL}/with/error`, {
+        expectedStatus: () => true
+      })
+    ).to.be.fulfilled;
+  });
+
   it('honoka.interceptors.register() should register a request interceptor', async () => {
     honoka.interceptors.register({
       request: options => {

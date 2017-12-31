@@ -139,7 +139,16 @@ These are the available config options for making requests. Same as fetch() API.
 
   // Authentication credentials mode
   // https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
-  credentials: 'omit' // default
+  credentials: 'omit', // default
+
+
+  // `expectedStatus` defines whether to resolve or reject the promise for a given
+  // HTTP response status code. If `expectedStatus` returns `true` (or is set to `null`
+  // or `undefined`), the promise will be resolved; otherwise, the promise will be
+  // rejected.
+  expectedStatus(status) {
+    return status >= 200 && status < 400; // default
+  }
 }
 ```
 

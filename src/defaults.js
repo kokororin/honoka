@@ -5,7 +5,10 @@ const defaults = {
   timeout: 0,
   method: 'get',
   headers: {},
-  dataType: 'auto'
+  dataType: 'auto',
+  expectedStatus(status) {
+    return status >= 200 && status < 400;
+  }
 };
 
 // set the default content-type of request methods
