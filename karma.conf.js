@@ -38,7 +38,7 @@ module.exports = function(config) {
       }
     },
     expressHttpServer: {
-      port: 3001,
+      port: server.port,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
       appVisitor: server

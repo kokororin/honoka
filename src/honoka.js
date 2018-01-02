@@ -1,5 +1,6 @@
 import forEach from 'foreach';
 import reduce from 'array-reduce';
+import mergeOptions from 'merge-options';
 import qsEncode from 'querystring/encode';
 import {
   trimStart,
@@ -22,10 +23,7 @@ if (!isNode()) {
 }
 
 function honoka(url, options = {}) {
-  options = {
-    ...defaults,
-    ...options
-  };
+  options = mergeOptions(defaults, options);
 
   options.method = options.method.toLowerCase();
 
@@ -46,10 +44,7 @@ function honoka(url, options = {}) {
   // Set default headers for specified methods
   const methodDefaultHeaders = defaults.headers[options.method];
   if (isObject(methodDefaultHeaders)) {
-    options.headers = {
-      ...methodDefaultHeaders,
-      ...options.headers
-    };
+    options.headers = mergeOptions(methodDefaultHeaders, options.headers);
   }
 
   forEach(methods, method => delete options.headers[method]);
@@ -165,7 +160,9 @@ function honoka(url, options = {}) {
         if (options.expectedStatus(honoka.response.status)) {
           resolve(responseData);
         } else {
-          reject(new Error('Not expected status code'));
+          reject(
+            new Error(`Unexpected status code: ${honoka.response.status}`)
+          );
         }
       })
       .catch(reject);
@@ -179,11 +176,9 @@ honoka.version = process.env.HONOKA_VERSION;
 
 // Provide aliases for supported request methods
 forEach(methods, method => {
-  honoka[method] = (url, options) => {
-    return honoka(url, {
-      method,
-      ...options
-    });
+  honoka[method] = (url, options = {}) => {
+    options.method = method;
+    return honoka(url, options);
   };
 });
 

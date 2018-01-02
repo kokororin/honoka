@@ -4,8 +4,7 @@ const bodyParser = require('body-parser');
 const upload = require('multer')();
 const sleep = require('system-sleep');
 
-function server(app, log) {
-  log.info('Visiting');
+function server(app) {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -15,7 +14,10 @@ function server(app, log) {
       'Access-Control-Allow-Methods',
       'PUT, POST, GET, DELETE, OPTIONS'
     );
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Content-Type, X-Requested-With, X-Name'
+    );
     res.header('X-Powered-By', 'Honoka Express Server');
 
     next();
@@ -57,6 +59,14 @@ function server(app, log) {
     res.json(req.query);
   });
 
+  app.get('/get/header', function(req, res) {
+    res.json(req.headers);
+  });
+
+  app.post('/post/header', function(req, res) {
+    res.json(req.headers);
+  });
+
   app.post('/post/param', function(req, res) {
     res.json(req.body);
   });
@@ -65,5 +75,7 @@ function server(app, log) {
     res.json(req.body);
   });
 }
+
+server.port = 3001;
 
 module.exports = server;

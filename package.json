@@ -39,6 +39,7 @@
   "dependencies": {
     "array-reduce": "^0.0.0",
     "foreach": "^2.0.5",
+    "merge-options": "^1.0.0",
     "node-fetch": "^1.7.2",
     "querystring": "^0.2.0",
     "whatwg-fetch": "^2.0.3"
@@ -46,7 +47,6 @@
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
-    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",

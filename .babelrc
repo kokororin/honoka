@@ -1,6 +1,5 @@
 {
   "presets": [["env", { "modules": false }], "stage-0"],
-  "plugins": ["transform-object-assign"],
   "env": {
     "test:node": {
       "presets": ["env", "stage-0"]

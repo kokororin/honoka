@@ -4,6 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 const pkg = require('./package.json');
+const server = require('./test/server');
 
 const config = {
   entry: {
@@ -24,7 +25,7 @@ const config = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /(node_modules|bower_components)/
+        include: [path.join(__dirname, 'src'), /node_modules\/merge-options/]
       }
     ]
   },
@@ -32,7 +33,10 @@ const config = {
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
-      'process.env.HONOKA_VERSION': JSON.stringify(pkg.version)
+      'process.env.HONOKA_VERSION': JSON.stringify(pkg.version),
+      'process.env.EXPRESS_BASE_URL': JSON.stringify(
+        'http://localhost:' + server.port
+      )
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.UglifyJsPlugin({

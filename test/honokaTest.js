@@ -1,18 +1,22 @@
 import { expect } from 'chai';
-
+import forEach from 'foreach';
 import honoka from '../src/honoka';
 import pkg from '../package.json';
 
-const EXPRESS_BASE_URL = 'http://localhost:3001';
+const EXPRESS_BASE_URL = process.env.EXPRESS_BASE_URL;
 const GET_QUERY = {
   q: 'honoka',
   ie: 'UTF-8'
 };
 const POST_DATA = { name: 'honoka' };
+const ORIGINAL_DEFAULTS = Object.assign({}, honoka.defaults);
 
 describe('honoka', () => {
   beforeEach(() => {
-    honoka.defaults.baseURL = '';
+    forEach(ORIGINAL_DEFAULTS, (value, key) => {
+      honoka.defaults[key] = value;
+    });
+
     honoka.interceptors.clear();
   });
 
@@ -177,9 +181,26 @@ describe('honoka', () => {
     expect(honoka(`${EXPRESS_BASE_URL}/with/json`)).to.be.rejected;
   });
 
-  it('honoka.defaults should work', async () => {
+  it('honoka.defaults.baseURL should work', async () => {
     honoka.defaults.baseURL = EXPRESS_BASE_URL;
     const data = await honoka('/with/ok');
     expect(data).to.deep.equal('ok');
+  });
+
+  it('honoka should combine headers', async () => {
+    honoka.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
+    const data = await honoka(`${EXPRESS_BASE_URL}/get/header`, {
+      headers: {
+        'X-Name': 'honoka'
+      }
+    });
+    expect(data['x-requested-with']).to.equal('XMLHttpRequest');
+    expect(data['x-name']).to.equal('honoka');
+  });
+
+  it('honoka.defaults.headers["post"] should work', async () => {
+    honoka.defaults.headers.post['X-Name'] = 'kotori';
+    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/header`);
+    expect(data['x-name']).to.equal('kotori');
   });
 });
