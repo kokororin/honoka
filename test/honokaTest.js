@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import forEach from 'foreach';
+import merge from 'merge-options';
 import honoka from '../src/honoka';
 import pkg from '../package.json';
 
@@ -9,12 +10,12 @@ const GET_QUERY = {
   ie: 'UTF-8'
 };
 const POST_DATA = { name: 'honoka' };
-const ORIGINAL_DEFAULTS = Object.assign({}, honoka.defaults);
+const ORIGINAL_DEFAULTS = merge(honoka.defaults);
 
 describe('honoka', () => {
-  beforeEach(() => {
+  afterEach(() => {
     forEach(ORIGINAL_DEFAULTS, (value, key) => {
-      honoka.defaults[key] = value;
+      honoka.defaults[key] = typeof value === 'object' ? merge(value) : value;
     });
 
     honoka.interceptors.clear();

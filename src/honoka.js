@@ -1,6 +1,6 @@
 import forEach from 'foreach';
 import reduce from 'array-reduce';
-import mergeOptions from 'merge-options';
+import merge from 'merge-options';
 import qsEncode from 'querystring/encode';
 import {
   trimStart,
@@ -23,7 +23,7 @@ if (!isNode()) {
 }
 
 function honoka(url, options = {}) {
-  options = mergeOptions(defaults, options);
+  options = merge(defaults, options);
 
   options.method = options.method.toLowerCase();
 
@@ -44,7 +44,7 @@ function honoka(url, options = {}) {
   // Set default headers for specified methods
   const methodDefaultHeaders = defaults.headers[options.method];
   if (isObject(methodDefaultHeaders)) {
-    options.headers = mergeOptions(methodDefaultHeaders, options.headers);
+    options.headers = merge(methodDefaultHeaders, options.headers);
   }
 
   forEach(methods, method => delete options.headers[method]);
