@@ -60,14 +60,14 @@ describe('honoka', () => {
     const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
       dataType: 'blob'
     });
-    expect(data instanceof Blob).to.equal(true);
+    expect(data instanceof Blob).to.be.true;
   });
 
   it('honoka() should transform ArrayBuffer Object when dataType is "arraybuffer"', async () => {
     const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
       dataType: 'arraybuffer'
     });
-    expect(data instanceof ArrayBuffer).to.equal(true);
+    expect(data instanceof ArrayBuffer).to.be.true;
   });
 
   it('honoka() should throw Error when dataType is "buffer"', () => {
@@ -114,7 +114,11 @@ describe('honoka', () => {
     await honoka(`${EXPRESS_BASE_URL}/with/json`);
     expect(
       honoka.response.headers.get('Content-Type').startsWith('application/json')
-    ).to.equal(true);
+    ).to.be.true;
+
+    await honoka(`${EXPRESS_BASE_URL}/with/ok`);
+    expect(honoka.response.headers.get('Content-Type').startsWith('text/html'))
+      .to.be.true;
   });
 
   it('honoka() should throw Error when status >= 400', () => {
