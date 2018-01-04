@@ -69,6 +69,7 @@ export interface HonokaRequestOptions {
   integrity?: string;
   window?: null;
   follow?: number;
+  baseURL?: string;
   timeout?: number;
   expectedStatus?(status: number): boolean;
   compress?: boolean;
