@@ -75,6 +75,7 @@ export interface HonokaRequestOptions {
   compress?: boolean;
   size?: number;
   agent?: any;
+  signal?: AbortSignal;
 }
 
 export interface HonokaHeaders {
