@@ -141,6 +141,20 @@ describe('honoka', () => {
     ).to.be.fulfilled;
   });
 
+  it('AbortController should work', () => {
+    // eslint-disable-next-line
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    expect(
+      honoka(`${EXPRESS_BASE_URL}/with/timeout`, {
+        signal
+      })
+    ).to.be.rejected;
+
+    abortController.abort();
+  });
+
   it('honoka.interceptors.register() should register a request interceptor', async () => {
     honoka.interceptors.register({
       request: options => {
