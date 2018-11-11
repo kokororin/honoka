@@ -148,7 +148,7 @@ These are the available config options for making requests. Same as fetch() API.
   // rejected.
   expectedStatus(status) {
     return status >= 200 && status < 400; // default
-  }
+  },
 }
 ```
 
@@ -156,7 +156,7 @@ These are the available config options for making requests. Same as fetch() API.
 
 You can specify config defaults that will be applied to every request.
 
-### Global defaults
+### Global Defaults
 
 ```js
 honoka.defaults.baseURL = 'https://example.com/api';
@@ -190,6 +190,27 @@ const unregister = honoka.interceptors.register({
 
 // Unregister your interceptor
 unregister();
+```
+
+## Abort Operation
+
+You can cancel a pending request manually by using `AbortController`.
+
+```js
+let abortController = new AbortController(),
+    signal = abortController.signal;
+
+honoka('/100MBtest.bin', { signal })
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+setTimeout(() => {
+  abortController.abort();
+}, 2000);
 ```
 
 ## Promises 
