@@ -4,7 +4,9 @@ const path = require('path');
 const webpackCfg = require('./webpack.config');
 const server = require('./test/server');
 
-process.env.CHROME_BIN = require('puppeteer').executablePath();
+if (process.env.CI) {
+  process.env.CHROME_BIN = require('puppeteer').executablePath();
+}
 
 module.exports = function(config) {
   const configuration = {
