@@ -67,6 +67,7 @@ export interface HonokaRequestOptions {
   cache?: HonokaRequestCache;
   redirect?: HonokaRequestRedirect;
   integrity?: string;
+  signal?: AbortSignal | null;
   window?: null;
   follow?: number;
   baseURL?: string;
@@ -75,7 +76,6 @@ export interface HonokaRequestOptions {
   compress?: boolean;
   size?: number;
   agent?: any;
-  signal?: AbortSignal;
 }
 
 export interface HonokaHeaders {
