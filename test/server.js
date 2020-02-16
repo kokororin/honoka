@@ -2,7 +2,6 @@
 /* eslint object-shorthand: 0 */
 const bodyParser = require('body-parser');
 const upload = require('multer')();
-const sleep = require('system-sleep');
 
 function server(app) {
   app.use(bodyParser.json());
@@ -47,8 +46,9 @@ function server(app) {
   });
 
   app.get('/with/timeout', function(req, res) {
-    sleep(1000);
-    res.send('timeout');
+    setTimeout(() => {
+      res.send('timeout');
+    });
   });
 
   app.post('/with/post', function(req, res) {

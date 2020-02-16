@@ -12,6 +12,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress",
     "lint": "eslint ./src",
     "start": "webpack --watch",
+    "pretest": "tsc --noEmit --p ./types",
     "test": "npm run test:browser && npm run test:node",
     "posttest": "npm run lint",
     "test:browser": "cross-env NODE_ENV=test karma start",
@@ -72,7 +73,7 @@
     "mocha": "^3.5.0",
     "multer": "^1.3.0",
     "puppeteer": "^1.5.0",
-    "system-sleep": "^1.3.6",
+    "typescript": "^3.7.5",
     "webpack": "^3.5.3",
     "webpack-bundle-analyzer": "^2.9.1"
   },
