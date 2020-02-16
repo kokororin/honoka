@@ -1,7 +1,16 @@
 {
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2016,
+    "sourceType": "module"
+  },
   "env": {
+    "browser": true,
+    "es6": true,
     "node": true,
     "mocha": true
   },
-  "extends": ["kotori"]
+  "extends": [
+    "kotori"
+  ]
 }
