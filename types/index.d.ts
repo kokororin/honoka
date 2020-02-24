@@ -56,7 +56,7 @@ type HonokaDataType =
 
 export interface HonokaRequestOptions {
   method?: string;
-  headers?: HonokaHeaders;
+  headers?: any;
   data?: any;
   dataType?: HonokaDataType;
   body?: any;
