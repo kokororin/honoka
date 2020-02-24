@@ -41,9 +41,9 @@
     "array-reduce": "^0.0.0",
     "foreach": "^2.0.5",
     "merge-options": "^1.0.0",
-    "node-fetch": "^1.7.2",
+    "node-fetch": "^2.6.0",
     "querystring": "^0.2.0",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
