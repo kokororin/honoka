@@ -1,6 +1,6 @@
 {
   "name": "honoka",
-  "version": "0.4.18",
+  "version": "0.4.19",
   "description": "Just a fetch() API wrapper for both Browser and Node.js.",
   "main": "index.js",
   "browser": "lib/honoka.js",
