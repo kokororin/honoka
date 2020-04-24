@@ -81,18 +81,20 @@ function honoka(url, options = {}) {
     []
   );
 
-  forEach(reversedInterceptors, interceptor => {
-    if (interceptor.request) {
-      const interceptedOptions = interceptor.request(options);
-      if (isObject(interceptedOptions)) {
-        options = interceptedOptions;
-      } else {
-        throw new Error(
-          'Apply request interceptor failed, please check your interceptor'
-        );
+  if (!options.ignoreInterceptors) {
+    forEach(reversedInterceptors, interceptor => {
+      if (interceptor.request) {
+        const interceptedOptions = interceptor.request(options);
+        if (isObject(interceptedOptions)) {
+          options = interceptedOptions;
+        } else {
+          throw new Error(
+            'Apply request interceptor failed, please check your interceptor'
+          );
+        }
       }
-    }
-  });
+    });
+  }
 
   return new Promise((resolve, reject) => {
     if (options.timeout > 0) {
@@ -136,6 +138,7 @@ function honoka(url, options = {}) {
       })
       .then(response => {
         response.data.then(data => {
+          const clonedResponse = response.clone();
           response.data = data;
           if (
             options.dataType.toLowerCase() === '' ||
@@ -147,28 +150,33 @@ function honoka(url, options = {}) {
             }
           }
 
-          for (let i = 0; i < reversedInterceptors.length; i++) {
-            const interceptor = reversedInterceptors[i];
-            if (interceptor.response) {
-              const interceptedResponse = interceptor.response(response);
-              if (interceptedResponse instanceof Error) {
-                reject(interceptedResponse);
-                break;
-              } else if (interceptedResponse) {
-                response = interceptedResponse;
-              } else {
-                reject(
-                  new Error(
-                    'Apply response interceptor failed, please check your interceptor'
-                  )
-                );
+          if (!options.ignoreInterceptors) {
+            for (let i = 0; i < reversedInterceptors.length; i++) {
+              const interceptor = reversedInterceptors[i];
+              if (interceptor.response) {
+                const interceptedResponse = interceptor.response(response);
+                if (interceptedResponse instanceof Error) {
+                  reject(interceptedResponse);
+                  break;
+                } else if (interceptedResponse) {
+                  response = interceptedResponse;
+                } else {
+                  reject(
+                    new Error(
+                      'Apply response interceptor failed, please check your interceptor'
+                    )
+                  );
+                }
               }
             }
           }
-          if (options.expectedStatus(response.status)) {
+
+          if (options.expectedStatus(clonedResponse.status)) {
             resolve(response);
           } else {
-            reject(new Error(`Unexpected status code: ${response.status}`));
+            reject(
+              new Error(`Unexpected status code: ${clonedResponse.status}`)
+            );
           }
         });
       })

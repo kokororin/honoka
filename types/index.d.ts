@@ -76,6 +76,7 @@ export interface HonokaRequestOptions {
   compress?: boolean;
   size?: number;
   agent?: any;
+  ignoreInterceptors?: boolean;
 }
 
 export interface HonokaHeaders {
@@ -124,7 +125,7 @@ export interface HonokaPromise extends Promise<HonokaResponse> {}
 
 export interface HonokaInterceptorOptions {
   request?(options: HonokaRequestOptions): HonokaRequestOptions;
-  response?(response: HonokaResponse): HonokaResponse | Error;
+  response?(response: HonokaResponse): HonokaResponse | Error | any;
 }
 
 export interface HonokaInterceptors {

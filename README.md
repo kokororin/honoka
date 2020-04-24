@@ -151,6 +151,9 @@ These are the available config options for making requests. Same as fetch() API.
   expectedStatus(status) {
     return status >= 200 && status < 400; // default
   },
+
+  // to ignore interceptors for one request
+  ignoreInterceptors: false,
 }
 ```
 
