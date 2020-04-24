@@ -147,13 +147,24 @@ function honoka(url, options = {}) {
             }
           }
 
-          forEach(reversedInterceptors, interceptor => {
+          for (let i = 0; i < reversedInterceptors.length; i++) {
+            const interceptor = reversedInterceptors[i];
             if (interceptor.response) {
               const interceptedResponse = interceptor.response(response);
-              response = interceptedResponse;
+              if (interceptedResponse instanceof Error) {
+                reject(interceptedResponse);
+                break;
+              } else if (interceptedResponse) {
+                response = interceptedResponse;
+              } else {
+                reject(
+                  new Error(
+                    'Apply response interceptor failed, please check your interceptor'
+                  )
+                );
+              }
             }
-          });
-
+          }
           if (options.expectedStatus(response.status)) {
             resolve(response);
           } else {

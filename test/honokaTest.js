@@ -175,6 +175,25 @@ describe('honoka', () => {
     expect(response.test).to.equal('test');
   });
 
+  it('honoka.interceptors.register() should register a rejected response interceptor', async () => {
+    honoka.interceptors.register({
+      response: response => {
+        if (response.data.code !== 200) {
+          return new Error('Something error');
+        }
+        return response;
+      }
+    });
+    expect(
+      honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
+        data: {
+          code: 400,
+          message: 'Something error'
+        }
+      })
+    ).to.be.rejectedWith('Something error');
+  });
+
   it('honoka.interceptors.clear() should clear all interceptors', () => {
     honoka.interceptors.register({
       response: null

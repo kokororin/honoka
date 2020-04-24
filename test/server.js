@@ -35,7 +35,7 @@ function server(app) {
   app.get('/with/timeout', function (req, res) {
     setTimeout(() => {
       res.send('timeout');
-    });
+    }, 2000);
   });
 
   app.post('/with/post', function (req, res) {

@@ -124,7 +124,7 @@ export interface HonokaPromise extends Promise<HonokaResponse> {}
 
 export interface HonokaInterceptorOptions {
   request?(options: HonokaRequestOptions): HonokaRequestOptions;
-  response?(response: HonokaResponse): HonokaResponse;
+  response?(response: HonokaResponse): HonokaResponse | Error;
 }
 
 export interface HonokaInterceptors {

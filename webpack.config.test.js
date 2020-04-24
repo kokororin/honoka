@@ -6,7 +6,7 @@ const server = require('./test/server');
 module.exports = {
   mode: 'development',
   entry: {
-    honoka: './src/index'
+    honoka: './src/honoka'
   },
   resolve: { extensions: ['.js'] },
   devtool: '#source-map',

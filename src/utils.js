@@ -45,6 +45,14 @@ export function isNode() {
   return false;
 }
 
+export function isPromise(obj) {
+  return (
+    !!obj &&
+    (typeof obj === 'object' || typeof obj === 'function') &&
+    typeof obj.then === 'function'
+  );
+}
+
 export function isAbsoluteURL(url) {
   return /^(?:[a-z]+:)?\/\//i.test(url);
 }
