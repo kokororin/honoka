@@ -3,7 +3,7 @@ import honoka from '../index';
 
 describe('node', () => {
   it('should work in node', async () => {
-    const data = await honoka.get('https://httpbin.org/get');
-    expect(data).to.have.own.property('origin');
+    const response = await honoka.get('https://httpbin.org/get');
+    expect(response.data).to.have.own.property('origin');
   });
 });

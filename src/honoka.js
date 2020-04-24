@@ -9,7 +9,6 @@ import {
   buildURL,
   normalizeHeaders,
   isObject,
-  isArray,
   isString,
   isFormData,
   isNode
@@ -63,7 +62,8 @@ function honoka(url, options = {}) {
     options.body = qsEncode(options.data);
   } else if (
     options.data &&
-    (options.method !== 'get' && options.method !== 'head')
+    options.method !== 'get' &&
+    options.method !== 'head'
   ) {
     options.body = options.data;
   }
@@ -105,65 +105,63 @@ function honoka(url, options = {}) {
 
     fetch(url, options)
       .then(response => {
-        honoka.response = response.clone();
+        const clonedResponse = response.clone();
+        let data;
 
         switch (options.dataType.toLowerCase()) {
           case 'arraybuffer':
-            return honoka.response.arrayBuffer();
+            data = clonedResponse.arrayBuffer();
+            break;
           case 'blob':
-            return honoka.response.blob();
+            data = clonedResponse.blob();
+            break;
           case 'json':
-            return honoka.response.json();
+            data = clonedResponse.json();
+            break;
           case 'buffer':
             if (!isNode()) {
               reject(new Error('"buffer" is not supported in browser'));
             }
-            return honoka.response.buffer();
+            data = clonedResponse.buffer();
+            break;
           case 'text':
           default:
-            return honoka.response.text();
+            data = clonedResponse.text();
+            break;
           case '':
           case 'auto':
-            return honoka.response.text();
+            data = clonedResponse.text();
+            break;
         }
+        response.data = data;
+        return response;
       })
-      .then(responseData => {
-        if (options.dataType === '' || options.dataType === 'auto') {
-          const contentType = honoka.response.headers.get('Content-Type');
-          if (contentType && contentType.match(/application\/json/i)) {
-            responseData = JSON.parse(responseData);
-          }
-        }
-
-        forEach(reversedInterceptors, interceptor => {
-          if (interceptor.response) {
-            const interceptedResponse = interceptor.response(
-              responseData,
-              honoka.response
-            );
-            if (
-              isArray(interceptedResponse) &&
-              interceptedResponse.length === 2
-            ) {
-              responseData = interceptedResponse[0];
-              honoka.response = interceptedResponse[1];
-            } else {
-              reject(
-                new Error(
-                  'Apply response interceptor failed, please check your interceptor'
-                )
-              );
+      .then(response => {
+        response.data.then(data => {
+          response.data = data;
+          if (
+            options.dataType.toLowerCase() === '' ||
+            options.dataType.toLowerCase() === 'auto'
+          ) {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.match(/application\/json/i)) {
+              response.data = JSON.parse(response.data);
             }
           }
-        });
 
-        if (options.expectedStatus(honoka.response.status)) {
-          resolve(responseData);
-        } else {
-          reject(
-            new Error(`Unexpected status code: ${honoka.response.status}`)
-          );
-        }
+          forEach(reversedInterceptors, interceptor => {
+            if (interceptor.response) {
+              const interceptedResponse = interceptor.response(response);
+              response = interceptedResponse;
+            }
+          });
+
+          if (options.expectedStatus(response.status)) {
+            resolve(response);
+          } else {
+            reject(new Error(`Unexpected status code: ${response.status}`));
+          }
+        });
       })
       .catch(reject);
   });

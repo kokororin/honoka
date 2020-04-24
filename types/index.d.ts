@@ -117,16 +117,14 @@ export interface HonokaResponse {
   readonly body: any;
   readonly trailer: Promise<HonokaHeaders>;
   clone(): HonokaResponse;
+  data: HonokaResponseData;
 }
 
-export interface HonokaPromise extends Promise<HonokaResponseData> {}
+export interface HonokaPromise extends Promise<HonokaResponse> {}
 
 export interface HonokaInterceptorOptions {
   request?(options: HonokaRequestOptions): HonokaRequestOptions;
-  response?(
-    data: HonokaResponseData,
-    response: HonokaResponse
-  ): [HonokaResponseData, HonokaResponse];
+  response?(response: HonokaResponse): HonokaResponse;
 }
 
 export interface HonokaInterceptors {
@@ -146,7 +144,6 @@ export interface HonokaStatic {
   post(url: string, options?: HonokaRequestOptions): HonokaPromise;
   put(url: string, options?: HonokaRequestOptions): HonokaPromise;
   patch(url: string, options?: HonokaRequestOptions): HonokaPromise;
-  response: HonokaResponse;
   version: string;
 }
 

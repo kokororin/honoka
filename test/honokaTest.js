@@ -26,48 +26,48 @@ describe('honoka', () => {
   });
 
   it('honoka() should return a body when status is 200', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/ok`);
-    expect(data).to.equal('ok');
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/ok`);
+    expect(response.data).to.equal('ok');
   });
 
   it('honoka() should build query strings correctly', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/get/query`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/get/query`, {
       data: GET_QUERY
     });
-    expect(data).to.deep.equal(GET_QUERY);
+    expect(response.data).to.deep.equal(GET_QUERY);
   });
 
   it('honoka() should transform JSON Object when Content-Type is "application/json"', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/json`);
-    expect(data.hello).to.equal('world');
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/json`);
+    expect(response.data.hello).to.equal('world');
   });
 
   it('honoka() should transform JSON Object when dataType is "json"', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/json`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/json`, {
       dataType: 'json'
     });
-    expect(data.hello).to.equal('world');
+    expect(response.data.hello).to.equal('world');
   });
 
   it('honoka() should transform Text when dataType is "text"', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/ok`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/ok`, {
       dataType: 'text'
     });
-    expect(data).to.equal('ok');
+    expect(response.data).to.equal('ok');
   });
 
   it('honoka() should transform Blob Object when dataType is "blob"', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
       dataType: 'blob'
     });
-    expect(data instanceof Blob).to.be.true;
+    expect(response.data instanceof Blob).to.be.true;
   });
 
   it('honoka() should transform ArrayBuffer Object when dataType is "arraybuffer"', async () => {
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/blob`, {
       dataType: 'arraybuffer'
     });
-    expect(data instanceof ArrayBuffer).to.be.true;
+    expect(response.data instanceof ArrayBuffer).to.be.true;
   });
 
   it('honoka() should throw Error when dataType is "buffer"', () => {
@@ -76,23 +76,23 @@ describe('honoka', () => {
   });
 
   it('honoka.post() should post JSON correctly', async () => {
-    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
+    const response = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
       headers: {
         'Content-Type': 'application/json'
       },
       data: POST_DATA
     });
-    expect(data).to.deep.equal(POST_DATA);
+    expect(response.data).to.deep.equal(POST_DATA);
   });
 
   it('honoka.post() should post params correctly', async () => {
-    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
+    const response = await honoka.post(`${EXPRESS_BASE_URL}/post/param`, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       data: POST_DATA
     });
-    expect(data).to.deep.equal(POST_DATA);
+    expect(response.data).to.deep.equal(POST_DATA);
   });
 
   it('honoka.post() should post FormData correctly', async () => {
@@ -101,24 +101,23 @@ describe('honoka', () => {
     for (const key in POST_DATA) {
       formData.append(key, POST_DATA[key]);
     }
-    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/formdata`, {
+    const response = await honoka.post(`${EXPRESS_BASE_URL}/post/formdata`, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
       data: formData
     });
-    expect(data).to.deep.equal(POST_DATA);
+    expect(response.data).to.deep.equal(POST_DATA);
   });
 
-  it('honoka.response should return the fetch response object', async () => {
-    await honoka(`${EXPRESS_BASE_URL}/with/json`);
-    expect(
-      honoka.response.headers.get('Content-Type').startsWith('application/json')
-    ).to.be.true;
-
-    await honoka(`${EXPRESS_BASE_URL}/with/ok`);
-    expect(honoka.response.headers.get('Content-Type').startsWith('text/html'))
+  it('response should return the fetch response object', async () => {
+    let response = await honoka(`${EXPRESS_BASE_URL}/with/json`);
+    expect(response.headers.get('Content-Type').startsWith('application/json'))
       .to.be.true;
+
+    response = await honoka(`${EXPRESS_BASE_URL}/with/ok`);
+    expect(response.headers.get('Content-Type').startsWith('text/html')).to.be
+      .true;
   });
 
   it('honoka() should throw Error when status >= 400', () => {
@@ -142,7 +141,6 @@ describe('honoka', () => {
   });
 
   it('AbortController should work', () => {
-    // eslint-disable-next-line
     const abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -162,19 +160,19 @@ describe('honoka', () => {
         return options;
       }
     });
-    const data = await honoka(`${EXPRESS_BASE_URL}/with/post`);
-    expect(data).to.equal('post');
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/post`);
+    expect(response.data).to.equal('post');
   });
 
   it('honoka.interceptors.register() should register a response interceptor', async () => {
     honoka.interceptors.register({
-      response: (data, response) => {
+      response: response => {
         response.test = 'test';
-        return [data, response];
+        return response;
       }
     });
-    await honoka(`${EXPRESS_BASE_URL}/with/json`);
-    expect(honoka.response.test).to.equal('test');
+    const response = await honoka(`${EXPRESS_BASE_URL}/with/json`);
+    expect(response.test).to.equal('test');
   });
 
   it('honoka.interceptors.clear() should clear all interceptors', () => {
@@ -202,24 +200,24 @@ describe('honoka', () => {
 
   it('honoka.defaults.baseURL should work', async () => {
     honoka.defaults.baseURL = EXPRESS_BASE_URL;
-    const data = await honoka('/with/ok');
-    expect(data).to.deep.equal('ok');
+    const response = await honoka('/with/ok');
+    expect(response.data).to.deep.equal('ok');
   });
 
   it('honoka should combine headers', async () => {
     honoka.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
-    const data = await honoka(`${EXPRESS_BASE_URL}/get/header`, {
+    const response = await honoka(`${EXPRESS_BASE_URL}/get/header`, {
       headers: {
         'X-Name': 'honoka'
       }
     });
-    expect(data['x-requested-with']).to.equal('XMLHttpRequest');
-    expect(data['x-name']).to.equal('honoka');
+    expect(response.data['x-requested-with']).to.equal('XMLHttpRequest');
+    expect(response.data['x-name']).to.equal('honoka');
   });
 
   it('honoka.defaults.headers["post"] should work', async () => {
     honoka.defaults.headers.post['X-Name'] = 'kotori';
-    const data = await honoka.post(`${EXPRESS_BASE_URL}/post/header`);
-    expect(data['x-name']).to.equal('kotori');
+    const response = await honoka.post(`${EXPRESS_BASE_URL}/post/header`);
+    expect(response.data['x-name']).to.equal('kotori');
   });
 });
