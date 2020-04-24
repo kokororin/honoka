@@ -17,9 +17,7 @@ import defaults from './defaults';
 import methods from './methods';
 import interceptors from './interceptors';
 
-if (!isNode()) {
-  require('whatwg-fetch');
-}
+require('whatwg-fetch');
 
 function honoka(url, options = {}) {
   options = merge(defaults, options);

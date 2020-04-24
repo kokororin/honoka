@@ -1,17 +1,17 @@
 /* eslint prefer-arrow-callback: 0 */
 /* eslint object-shorthand: 0 */
 const path = require('path');
-const webpackCfg = require('./webpack.config');
+const webpackCfg = require('./webpack.config.test');
 const server = require('./test/server');
 
 if (process.env.CI) {
   process.env.CHROME_BIN = require('puppeteer').executablePath();
 }
 
-module.exports = function(config) {
+module.exports = function (config) {
   const configuration = {
     basePath: '',
-    browsers: ['KarmaChromeHeadless'],
+    browsers: process.env.CI ? ['KarmaChromeHeadless'] : ['Chrome'],
     customLaunchers: {
       KarmaChromeHeadless: {
         base: 'ChromeHeadless',

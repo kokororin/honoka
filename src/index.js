@@ -1,2 +1,3 @@
-module.exports = require('./honoka').default;
-module.exports.default = require('./honoka').default;
+import honoka from './honoka';
+require('whatwg-fetch');
+export default honoka;

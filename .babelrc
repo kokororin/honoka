@@ -1,8 +1,15 @@
 {
-  "presets": [["env", { "modules": false }], "stage-0"],
+  "presets": [
+    ["@babel/preset-env", { "modules": false }]
+  ],
+  "plugins": [
+    ["@babel/plugin-transform-runtime", { "regenerator": true }]
+  ],
   "env": {
     "test:node": {
-      "presets": ["env", "stage-0"]
+      "presets": [
+        "@babel/preset-env"
+      ]
     }
   }
 }

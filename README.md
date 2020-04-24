@@ -11,8 +11,7 @@ Just a fetch() API wrapper for both Browser and Node.js.
 - Same as [fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - Timeout
 - Interceptors before request and response
-- Transform/convert request and response data
-
+- Transform/convert request and response
 
 ## Installing
 
@@ -35,8 +34,9 @@ Performing a `GET` request
 ```js
 // Make a request for a user with a given ID
 honoka.get('/user?ID=12345')
-  .then(data => {
-    console.log(data);
+  .then(response => {
+    console.log(response);
+    console.log(response.data);
   })
   .catch(error => {
     console.log(error);
@@ -48,8 +48,9 @@ honoka.get('/user', {
       ID: 12345
     }
   })
-  .then(data => {
-    console.log(data);
+  .then(response => {
+    console.log(response);
+    console.log(response.data);
   })
   .catch(error => {
     console.log(error);
@@ -65,8 +66,9 @@ honoka.post('/user', {
       lastName: 'Flintstone'
     }
   })
-  .then(data => {
-    console.log(data);
+  .then(response => {
+    console.log(response);
+    console.log(response.data);
   })
   .catch(error => {
     console.log(error);
@@ -178,13 +180,13 @@ const unregister = honoka.interceptors.register({
     }
     return options;
   },
-  response: (data, response) => {
+  response: response => {
     // Check responseData here
-    if (data.status && data.status !== 'success') {
+    if (response.data.status && response.data.status !== 'success') {
       alert('request error');
     }
-    // Modify the data & response object
-    return [data, response];
+    // Modify the response object
+    return response;
   }
 })
 
